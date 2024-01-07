@@ -44,6 +44,7 @@ find_package(Threads REQUIRED)
 add_library(${PROJECT_NAME}
     src/main/native/cpp/rknn_jni.cpp
     src/main/native/cpp/rkYolov5s.cc
+    src/main/native/cpp/rknn_wrapper.cc
     src/main/native/cpp/preprocess.cc
     src/main/native/cpp/postprocess.cc
 )
