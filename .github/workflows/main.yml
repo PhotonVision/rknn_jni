@@ -35,7 +35,7 @@ jobs:
         bind_mount_repository: true
         commands: |
             apt-get update
-            apt-get install -y cmake build-essential openjdk-17-jdk
+            apt-get install -y cmake build-essential default-jdk openjdk-17-jdk
             cmake -B cmake_build -DCMAKE_BUILD_TYPE=Release
             cmake --build cmake_build -j 4
 
