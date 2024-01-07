@@ -46,6 +46,5 @@ std::optional<object_detect_result_list> RknnYoloWrapper::inference(uint8_t* src
 }
 
 RknnYoloWrapper::~RknnYoloWrapper() {
-    deinit_post_process();
     int ret = release_yolov7_model(&rknn_app_ctx);
 }

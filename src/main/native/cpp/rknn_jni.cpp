@@ -66,6 +66,8 @@ Java_org_photonvision_rknn_RknnJNI_create
 
   const char *nativeString = env->GetStringUTFChars(javaString, 0);
 
+  printf("Creating for %s\n", nativeString);
+
   if (!wrapper->init(nativeString)) {
     env->ReleaseStringUTFChars(javaString, nativeString);
     delete wrapper;

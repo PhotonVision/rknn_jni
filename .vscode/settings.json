@@ -4,7 +4,8 @@
         "string": "cpp",
         "string_view": "cpp",
         "chrono": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "*.tcc": "cpp"
     },
     "java.configuration.updateBuildConfiguration": "automatic"
 }
