@@ -54,12 +54,12 @@ static jobject MakeJObject(JNIEnv *env, const object_detect_result &result) {
 }
 
 /*
- * Class:     src_main_java_org_photonvision_rknn_RknnJNI
+ * Class:     org_photonvision_rknn_RknnJNI
  * Method:    create
  * Signature: (Ljava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL
-Java_src_main_java_org_photonvision_rknn_RknnJNI_create
+Java_org_photonvision_rknn_RknnJNI_create
   (JNIEnv *env, jclass, jstring javaString)
 {
   RknnYoloWrapper *wrapper = new RknnYoloWrapper();
@@ -77,24 +77,24 @@ Java_src_main_java_org_photonvision_rknn_RknnJNI_create
 }
 
 /*
- * Class:     src_main_java_org_photonvision_rknn_RknnJNI
+ * Class:     org_photonvision_rknn_RknnJNI
  * Method:    destroy
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL
-Java_src_main_java_org_photonvision_rknn_RknnJNI_destroy
+Java_org_photonvision_rknn_RknnJNI_destroy
   (JNIEnv *env, jclass, jlong ptr)
 {
   delete reinterpret_cast<RknnYoloWrapper *>(ptr);
 }
 
 /*
- * Class:     src_main_java_org_photonvision_rknn_RknnJNI
+ * Class:     org_photonvision_rknn_RknnJNI
  * Method:    detect
  * Signature: (JJIIF)[Ljava/lang/Object;
  */
 JNIEXPORT jobjectArray JNICALL
-Java_src_main_java_org_photonvision_rknn_RknnJNI_detect
+Java_org_photonvision_rknn_RknnJNI_detect
   (JNIEnv *env, jclass, jlong detector_, jlong blob, jint x_pad, jint y_pad,
    jfloat scale)
 {

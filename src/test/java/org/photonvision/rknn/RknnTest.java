@@ -33,10 +33,15 @@ import edu.wpi.first.util.CombinedRuntimeLoader;
 
 public class RknnTest {
     @Test
-    public void testBasicBlobs() throws IOException {
+    public void testBasicBlobs() {
         // I really really hate this. Someone should fix this for me
         // var s = new CvSink("guh");
-        CombinedRuntimeLoader.loadLibraries(RknnTest.class, Core.NATIVE_LIBRARY_NAME);
+        try {
+            CombinedRuntimeLoader.loadLibraries(RknnTest.class, Core.NATIVE_LIBRARY_NAME);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         // This also needs to get fixed
         System.load("/home/matt/Documents/rknn/rknn_java/cmake_build/librknn_java.so");
