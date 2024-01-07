@@ -33,7 +33,7 @@ add_library(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} 
     Threads::Threads
     fileutils
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/librknnrt.so
+    # ${CMAKE_CURRENT_SOURCE_DIR}/lib/librknnrt.so
     )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
