@@ -5,7 +5,13 @@
         "string_view": "cpp",
         "chrono": "cpp",
         "optional": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "memory": "cpp",
+        "future": "cpp",
+        "istream": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp"
     },
     "java.configuration.updateBuildConfiguration": "automatic"
 }

@@ -16,10 +16,9 @@
  */
 
 #include "rknn_jni.h"
-
+#include "postprocess.h"
 #include <cstdio>
-
-#include "rknn_yolo_wrapper.h"
+#include "rkYolov5s.hpp"
 #include "wpi_jni_common.h"
 
 static JClass detectionResultClass;
@@ -43,15 +42,17 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
   return JNI_VERSION_1_6;
 }
 
-static jobject MakeJObject(JNIEnv *env, const object_detect_result &result) {
-  jmethodID constructor =
-      env->GetMethodID(detectionResultClass, "<init>", "(IIIIFI)V");
 
-  // Actually call the constructor
-  return env->NewObject(detectionResultClass, constructor, result.box.left,
-                        result.box.top, result.box.right, result.box.bottom,
-                        result.prop, result.cls_id);
-}
+
+// static jobject MakeJObject(JNIEnv *env, const detect_result_t &result) {
+//   jmethodID constructor =
+//       env->GetMethodID(detectionResultClass, "<init>", "(IIIIFI)V");
+
+//   // Actually call the constructor
+//   return env->NewObject(detectionResultClass, constructor, result.box.left,
+//                         result.box.top, result.box.right, result.box.bottom,
+//                         result.prop, result.cls_id);
+// }
 
 /*
  * Class:     org_photonvision_rknn_RknnJNI
@@ -62,20 +63,8 @@ JNIEXPORT jlong JNICALL
 Java_org_photonvision_rknn_RknnJNI_create
   (JNIEnv *env, jclass, jstring javaString)
 {
-  RknnYoloWrapper *wrapper = new RknnYoloWrapper();
-
   const char *nativeString = env->GetStringUTFChars(javaString, 0);
-
   printf("Creating for %s\n", nativeString);
-
-  if (!wrapper->init(nativeString)) {
-    env->ReleaseStringUTFChars(javaString, nativeString);
-    delete wrapper;
-    return 0;
-  }
-  env->ReleaseStringUTFChars(javaString, nativeString);
-
-  return reinterpret_cast<jlong>(wrapper);
 }
 
 /*
@@ -87,7 +76,7 @@ JNIEXPORT void JNICALL
 Java_org_photonvision_rknn_RknnJNI_destroy
   (JNIEnv *env, jclass, jlong ptr)
 {
-  delete reinterpret_cast<RknnYoloWrapper *>(ptr);
+  
 }
 
 /*
@@ -100,25 +89,7 @@ Java_org_photonvision_rknn_RknnJNI_detect
   (JNIEnv *env, jclass, jlong detector_, jlong blob, jint x_pad, jint y_pad,
    jfloat scale)
 {
-  RknnYoloWrapper *yolo = reinterpret_cast<RknnYoloWrapper *>(detector_);
 
-  auto results = yolo->inference(
-      reinterpret_cast<uint8_t *>(blob),
-      letterbox_t{.x_pad = x_pad, .y_pad = y_pad, .scale = scale});
-
-  if (!results) {
-    return {};
-  }
-
-  jobjectArray jarr =
-      env->NewObjectArray(results.value().count, detectionResultClass, nullptr);
-
-  for (size_t i = 0; i < results.value().count; i++) {
-    jobject obj = MakeJObject(env, results.value().results[i]);
-    env->SetObjectArrayElement(jarr, i, obj);
-  }
-
-  return jarr;
 }
 
 }
