@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.dnn.Dnn;
@@ -28,12 +29,14 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.util.CombinedRuntimeLoader;
 
 public class RknnTest {
     @Test
     public void testBasicBlobs() throws IOException {
         // I really really hate this. Someone should fix this for me
-        var s = new CvSink("guh");
+        // var s = new CvSink("guh");
+        CombinedRuntimeLoader.loadLibraries(RknnTest.class, Core.NATIVE_LIBRARY_NAME);
 
         // This also needs to get fixed
         System.load("/home/matt/Documents/rknn/rknn_java/cmake_build/librknn_java.so");

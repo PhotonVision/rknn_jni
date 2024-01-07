@@ -47,7 +47,9 @@ dependencies {
     testImplementation wpilibTools.deps.wpilibJava("cscore")
 
     implementation wpilibTools.deps.wpilibOpenCvJava("frc" + wpi.frcYear.get(), wpi.versions.opencvVersion.get())
-
+    testImplementation group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: wpi.versions.jacksonVersion.get()
+    testImplementation group: "com.fasterxml.jackson.core", name: "jackson-core", version: wpi.versions.jacksonVersion.get()
+    testImplementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: wpi.versions.jacksonVersion.get()
 }
 
 tasks.withType(JavaCompile) {
@@ -87,7 +89,6 @@ tasks.register('copyNativeLibrary', Sync) {
     publish.dependsOn it
 }
 
-
 def nativeConfigName = 'wpilibNatives'
 def nativeConfig = configurations.create(nativeConfigName)
 
@@ -97,8 +98,8 @@ def nativeTasks = wpilibTools.createExtractionTasks {
 
 nativeTasks.addToSourceSetResources(sourceSets.main)
 
-nativeConfig.dependencies.add wpilibTools.deps.wpilib("wpiutil")
 nativeConfig.dependencies.add wpilibTools.deps.wpilib("wpinet")
+nativeConfig.dependencies.add wpilibTools.deps.wpilib("wpiutil")
 nativeConfig.dependencies.add wpilibTools.deps.wpilib("cscore")
 nativeConfig.dependencies.add wpilibTools.deps.wpilibOpenCv("frc" + wpi.frcYear.get(), wpi.versions.opencvVersion.get())
 
