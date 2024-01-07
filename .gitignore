@@ -2,3 +2,6 @@ build
 rknpu2
 cmake_build
 .gradle
+
+*.onnx
+*.jar
