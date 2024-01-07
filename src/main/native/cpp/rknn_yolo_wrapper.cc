@@ -23,7 +23,6 @@
 #include "yolov7.h"
 #include "file_utils.h"
 #include "rknn_yolo_wrapper.h"
-#include "rknn_jni.h"
 
 RknnYoloWrapper::RknnYoloWrapper() {
     // Make very sure zero-inited? copied from example

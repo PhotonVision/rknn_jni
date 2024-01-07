@@ -24,6 +24,8 @@
 
 static JClass detectionResultClass;
 
+extern "C" {
+
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
   JNIEnv *env;
   if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
@@ -115,4 +117,6 @@ Java_src_main_java_org_photonvision_rknn_RknnJNI_detect
   }
 
   return jarr;
+}
+
 }
