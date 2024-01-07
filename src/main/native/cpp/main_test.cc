@@ -28,7 +28,7 @@ int main(int argc, char **argv)
         if (capture.read(img) == false)
             break;
 
-        if (!wrapper.EnqueueMat(&img) {
+        if (!wrapper.EnqueueMat(&img)) {
             break;
         }
         if (!wrapper.DequeueMat(&img)) {
