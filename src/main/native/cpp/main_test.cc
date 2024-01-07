@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 
     RknnWrapper wrapper (model_name, 3);
 
-    {
+    for (int i = 0; i < 20; i++) {
         cv::Mat img;
         img = cv::imread("src/test/resources/bus.jpg");
 
