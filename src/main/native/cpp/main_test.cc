@@ -3,30 +3,21 @@
 int main(int argc, char **argv)
 {
     char *model_name = NULL;
-    if (argc != 3)
+    if (argc != 2)
     {
-        printf("Usage: %s <rknn model> <jpg> \n", argv[0]);
+        printf("Usage: %s <rknn model> \n", argv[0]);
         return -1;
     }
-    // 参数二，模型所在路径/The path where the model is located
+    // Path to model
     model_name = (char *)argv[1];
-    // 参数三, 视频/摄像头
-    char *vedio_name = argv[2];
 
     cv::namedWindow("Camera FPS");
-    cv::VideoCapture capture;
-    if (strlen(vedio_name) == 1)
-        capture.open((int)(vedio_name[0] - '0'));
-    else
-        capture.open(vedio_name);
 
     RknnWrapper wrapper (model_name, 3);
 
-    while (capture.isOpened())
     {
         cv::Mat img;
-        if (capture.read(img) == false)
-            break;
+        img = cv::imread("src/test/resources/bus.jpg");
 
         if (!wrapper.EnqueueMat(&img)) {
             break;
