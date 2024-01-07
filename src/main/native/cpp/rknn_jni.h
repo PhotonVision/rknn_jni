@@ -18,40 +18,40 @@
 /* DO NOT EDIT THIS std::FILE - it is machine generated */
 #include <jni.h>
 
-/* Header for class src_main_java_org_photonvision_rknn_RknnJNI */
+/* Header for class org_photonvision_rknn_RknnJNI */
 
-#ifndef RKNN_JAVA_RKNN_JNI_H_
-#define RKNN_JAVA_RKNN_JNI_H_
+#ifndef RKNN_JAVA_SRC_MAIN_NATIVE_CPP_RKNN_JNI_H_
+#define RKNN_JAVA_SRC_MAIN_NATIVE_CPP_RKNN_JNI_H_
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     src_main_java_org_photonvision_rknn_RknnJNI
- * Method:    detect
- * Signature: (JIIF)[Lsrc/main/java/org/photonvision/rknn/RknnJNI/RknnResult;
- */
-JNIEXPORT jobjectArray JNICALL
-Java_src_main_java_org_photonvision_rknn_RknnJNI_detect(JNIEnv *, jclass, jlong,
-                                                        jlong, jint, jint,
-                                                        jfloat);
-
-/*
- * Class:     src_main_java_org_photonvision_rknn_RknnJNI
+ * Class:     org_photonvision_rknn_RknnJNI
  * Method:    create
  * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_src_main_java_org_photonvision_rknn_RknnJNI_create(
-    JNIEnv *env, jclass, jstring);
+JNIEXPORT jlong JNICALL Java_org_photonvision_rknn_RknnJNI_create(JNIEnv *,
+                                                                  jclass,
+                                                                  jstring);
 
 /*
- * Class:     src_main_java_org_photonvision_rknn_RknnJNI
+ * Class:     org_photonvision_rknn_RknnJNI
  * Method:    destroy
- * Signature: (J)v
+ * Signature: (J)J
  */
-JNIEXPORT void JNICALL Java_src_main_java_org_photonvision_rknn_RknnJNI_destroy(
-    JNIEnv *env, jclass, jlong ptr);
+JNIEXPORT jlong JNICALL Java_org_photonvision_rknn_RknnJNI_destroy(JNIEnv *,
+                                                                   jclass,
+                                                                   jlong);
+
+/*
+ * Class:     org_photonvision_rknn_RknnJNI
+ * Method:    detect
+ * Signature: (JJIIF)[Lorg/photonvision/rknn/RknnJNI/RknnResult;
+ */
+JNIEXPORT jobjectArray JNICALL Java_org_photonvision_rknn_RknnJNI_detect(
+    JNIEnv *, jclass, jlong, jlong, jint, jint, jfloat);
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
-#endif // RKNN_JAVA_RKNN_JNI_H_
+#endif // RKNN_JAVA_SRC_MAIN_NATIVE_CPP_RKNN_JNI_H_

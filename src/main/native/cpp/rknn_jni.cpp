@@ -30,7 +30,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     return JNI_ERR;
   }
 
-  detectionResultClass = JClass(env, "org/photonvision/RknnJNI$RknnResult");
+  detectionResultClass =
+      JClass(env, "org/photonvision/rknn/RknnJNI$RknnResult");
 
   if (!detectionResultClass) {
     std::printf("Couldn't find class!");

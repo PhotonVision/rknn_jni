@@ -26,7 +26,6 @@
 #define BOX_THRESH 0.25
 #define PROP_BOX_SIZE (5 + OBJ_CLASS_NUM)
 
-
 /**
  * @brief Image pixel format
  *

@@ -15,8 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef RKNN_JAVA_YOLOV7_H_
-#define RKNN_JAVA_YOLOV7_H_
+#ifndef RKNN_JAVA_SRC_MAIN_NATIVE_CPP_YOLOV7_H_
+#define RKNN_JAVA_SRC_MAIN_NATIVE_CPP_YOLOV7_H_
 
 #include "common.h"
 #include "rknn_api.h"
@@ -50,4 +50,4 @@ int inference_yolov7_raw(rknn_app_context_t *app_ctx, uint8_t *image_ptr,
                          letterbox_t letterbox,
                          object_detect_result_list *od_results);
 
-#endif // RKNN_JAVA_YOLOV7_H_
+#endif // RKNN_JAVA_SRC_MAIN_NATIVE_CPP_YOLOV7_H_

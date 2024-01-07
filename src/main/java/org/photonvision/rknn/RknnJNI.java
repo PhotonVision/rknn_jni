@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package src.main.java.org.photonvision.rknn;
+package org.photonvision.rknn;
 
 public class RknnJNI {
     public static class RknnResult {
@@ -23,6 +23,9 @@ public class RknnJNI {
             int left, int top, int right, int bottom, float conf, int class_id
         ) {}
     }
+
+    public static native long create(String modelPath);
+    public static native long destroy(long ptr);
 
     public static native RknnResult[] detect(
         long detectorPtr, long blobNCHWPtr,

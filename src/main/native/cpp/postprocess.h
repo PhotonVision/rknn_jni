@@ -15,16 +15,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef RKNN_JAVA_POSTPROCESS_H_
-#define RKNN_JAVA_POSTPROCESS_H_
+#ifndef RKNN_JAVA_SRC_MAIN_NATIVE_CPP_POSTPROCESS_H_
+#define RKNN_JAVA_SRC_MAIN_NATIVE_CPP_POSTPROCESS_H_
 
 #include <stdint.h>
-#include "yolov7.h"
 
 #include <vector>
 
 #include "common.h"
 #include "rknn_api.h"
+#include "yolov7.h"
 
 int init_post_process();
 void deinit_post_process();
@@ -34,4 +34,4 @@ int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs,
                  float nms_threshold, object_detect_result_list *od_results);
 
 void deinitPostProcess();
-#endif // RKNN_JAVA_POSTPROCESS_H_
+#endif // RKNN_JAVA_SRC_MAIN_NATIVE_CPP_POSTPROCESS_H_
