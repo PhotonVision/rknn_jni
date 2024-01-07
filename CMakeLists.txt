@@ -11,10 +11,6 @@ if (ENABLE_ASAN)
 	set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 endif ()
 
-set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
-
-file(GLOB SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
-
 set(BUILD_SHARED_LIBS ON)
 
 find_package(JNI)
@@ -24,6 +20,8 @@ if(JNI_FOUND)
     message(STATUS "JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
 endif()
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 
 add_library(${PROJECT_NAME}
     src/main/native/cpp/rknn_yolo_wrapper.cc
@@ -32,23 +30,11 @@ add_library(${PROJECT_NAME}
     src/main/native/cpp/yolov7.cc
 )
 
-
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME} 
+    Threads::Threads
     fileutils
-    ${LIBRKNNRT}
-)
-
-if (CMAKE_SYSTEM_NAME STREQUAL "Android")
-    target_link_libraries(${PROJECT_NAME}
-    log
-)
-endif()
-
-if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(THREADS_PREFER_PTHREAD_FLAG ON)
-    find_package(Threads REQUIRED)
-    target_link_libraries(${PROJECT_NAME} Threads::Threads)
-endif()
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/librknnrt.so
+    )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -57,9 +43,3 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/utils
     ${JNI_INCLUDE_DIRS}
 )
-
-install(TARGETS ${PROJECT_NAME} DESTINATION .)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../model/bus.jpg DESTINATION model)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../model/coco_80_labels_list.txt DESTINATION model)
-file(GLOB RKNN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../model/*.rknn")
-install(FILES ${RKNN_FILES} DESTINATION model)
