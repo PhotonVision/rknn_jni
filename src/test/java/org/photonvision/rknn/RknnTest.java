@@ -52,7 +52,7 @@ public class RknnTest {
         var blob = Dnn.blobFromImage(img, 1.0 / 255.0, new Size(640, 640));
 
         // This also needs to get changed
-        long ptr = RknnJNI.create("/home/matt/Documents/rknn/rknn_java/src/test/resources/yolov7-tiny.onnx");
+        long ptr = RknnJNI.create("/home/matt/Documents/rknn/rknn_java/src/test/resources/yolov7-tiny.rknn");
         System.out.println(ptr);
 
         var ret = RknnJNI.detect(ptr, blob.getNativeObjAddr(), 0, 0, 1);
