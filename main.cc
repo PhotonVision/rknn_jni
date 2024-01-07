@@ -21,9 +21,9 @@
 #include <string.h>
 
 #include "yolov7.h"
-#include "image_utils.h"
+// #include "image_utils.h"
 #include "file_utils.h"
-#include "image_drawing.h"
+// #include "image_drawing.h"
 #include "easy_timer.h"
 
 /*-------------------------------------------

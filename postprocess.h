@@ -5,7 +5,7 @@
 #include <vector>
 #include "rknn_api.h"
 #include "common.h"
-#include "image_utils.h"
+// #include "image_utils.h"
 
 #define OBJ_NAME_MAX_SIZE 64
 #define OBJ_NUMB_MAX_SIZE 128
@@ -17,6 +17,12 @@
 // class rknn_app_context_t;
 
 typedef struct {
+    int x_pad;
+    int y_pad;
+    float scale;
+} letterbox_t;
+
+typedef struct {
     image_rect_t box;
     float prop;
     int cls_id;
@@ -24,7 +30,7 @@ typedef struct {
 
 typedef struct {
     int id;
-    int count;
+    int count; // Number of results (ew)
     object_detect_result results[OBJ_NUMB_MAX_SIZE];
 } object_detect_result_list;
 

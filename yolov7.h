@@ -39,4 +39,13 @@ int release_yolov7_model(rknn_app_context_t* app_ctx);
 
 int inference_yolov7_model(rknn_app_context_t* app_ctx, image_buffer_t* img, object_detect_result_list* od_results);
 
+/**
+ * Run inference without bothering with RGA letterboxing, since I'm lazy
+ * @param app_ctx App ctx from above
+ * @param image_ptr Pointer to NCHW data blob
+ * @param letterbox the letterbox applied to crop the image
+ * @param od_results output result array
+*/
+int inference_yolov7_raw(rknn_app_context_t* app_ctx, uint8_t *image_ptr, letterbox_t letterbox, object_detect_result_list* od_results);
+
 #endif //_RKNN_DEMO_YOLOV7_H_

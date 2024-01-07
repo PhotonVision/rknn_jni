@@ -23,9 +23,6 @@
 
 #include <set>
 #include <vector>
-#define LABEL_NALE_TXT_PATH "./model/coco_80_labels_list.txt"
-
-static char *labels[OBJ_CLASS_NUM];
 
 const int anchor[3][6] = {{12,16,19,36,40,28},
                           {36,75,76,55,72,146},
@@ -91,13 +88,6 @@ static int readLines(const char *fileName, char *lines[], int max_line)
     }
     fclose(file);
     return i;
-}
-
-static int loadLabelName(const char *locationFilename, char *label[])
-{
-    printf("load lable %s\n", locationFilename);
-    readLines(locationFilename, label, OBJ_CLASS_NUM);
-    return 0;
 }
 
 static float CalculateOverlap(float xmin0, float ymin0, float xmax0, float ymax0, float xmin1, float ymin1, float xmax1,
@@ -393,44 +383,4 @@ int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, letterbox_t 
     }
     od_results->count = last_count;
     return 0;
-}
-
-int init_post_process()
-{
-    int ret = 0;
-    ret = loadLabelName(LABEL_NALE_TXT_PATH, labels);
-    if (ret < 0)
-    {
-        printf("Load %s failed!\n", LABEL_NALE_TXT_PATH);
-        return -1;
-    }
-    return 0;
-}
-
-char *coco_cls_to_name(int cls_id)
-{
-
-    if (cls_id >= OBJ_CLASS_NUM)
-    {
-        return "null";
-    }
-
-    if (labels[cls_id])
-    {
-        return labels[cls_id];
-    }
-
-    return "null";
-}
-
-void deinit_post_process()
-{
-    for (int i = 0; i < OBJ_CLASS_NUM; i++)
-    {
-        if (labels[i] != nullptr)
-        {
-            free(labels[i]);
-            labels[i] = nullptr;
-        }
-    }
 }

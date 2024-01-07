@@ -1,0 +1,33 @@
+cppHeaderFileInclude {
+  \.h$
+  \.hpp$
+  \.inc$
+  \.inl$
+}
+
+cppSrcFileInclude {
+  \.cpp$
+}
+
+modifiableFileExclude {
+  \.jpg$
+  \.jpeg$
+  \.png$
+  \.gif$
+  \.so$
+  \.dll$
+  \.webp$
+  \.ico$
+  gradlew
+}
+
+includeProject {
+  ^photonLib/
+}
+
+includeOtherLibs {
+  ^frc/
+  ^networktables/
+  ^units/
+  ^wpi/
+}

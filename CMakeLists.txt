@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(rknn_yolov7_demo)
+project(rknn_java)
 
-add_subdirectory(librga-rockchip)
 add_subdirectory(utils)
 
 if (ENABLE_ASAN)
@@ -19,8 +18,19 @@ set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
 
 file(GLOB SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 
-add_executable(${PROJECT_NAME}
-    main.cc
+set(BUILD_SHARED_LIBS ON)
+
+find_package(JNI)
+if(JNI_FOUND)
+    # Fixes odd AWT dependency
+    set(JNI_INCLUDE_DIRS ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
+    message(STATUS "JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
+endif()
+
+
+add_library(${PROJECT_NAME}
+    rknn_yolo_wrapper.cc
+    rknn_jni.cpp
     postprocess.cc
     rknpu2/yolov7.cc
 )
@@ -28,8 +38,6 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     fileutils
-    imageutils
-    imagedrawing    
     ${LIBRKNNRT}
 )
 
@@ -50,6 +58,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${LIBRKNNRT_INCLUDES}
     ${CMAKE_CURRENT_SOURCE_DIR}/rknpu2/include
     ${CMAKE_CURRENT_SOURCE_DIR}/utils
+    ${JNI_INCLUDE_DIRS}
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION .)
