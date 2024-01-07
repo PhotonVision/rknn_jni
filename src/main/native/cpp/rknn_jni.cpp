@@ -20,6 +20,7 @@
 #include <cstdio>
 #include "rkYolov5s.hpp"
 #include "wpi_jni_common.h"
+#include "rknn_wrapper.h"
 
 static JClass detectionResultClass;
 
@@ -65,6 +66,10 @@ Java_org_photonvision_rknn_RknnJNI_create
 {
   const char *nativeString = env->GetStringUTFChars(javaString, 0);
   printf("Creating for %s\n", nativeString);
+
+  auto ret = new RknnWrapper(nativeString, 3);
+  env->ReleaseStringUTFChars(javaString, nativeString);
+  return reinterpret_cast<jlong>(ret);
 }
 
 /*
@@ -76,7 +81,7 @@ JNIEXPORT void JNICALL
 Java_org_photonvision_rknn_RknnJNI_destroy
   (JNIEnv *env, jclass, jlong ptr)
 {
-  
+  delete reinterpret_cast<RknnWrapper *>(ptr); 
 }
 
 /*
@@ -92,4 +97,4 @@ Java_org_photonvision_rknn_RknnJNI_detect
 
 }
 
-}
+} // Extern "C"

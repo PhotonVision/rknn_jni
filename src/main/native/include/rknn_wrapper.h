@@ -14,7 +14,7 @@ private:
     rknnPool<rkYolov5s, cv::Mat, cv::Mat> testPool;
 
 public:
-    RknnWrapper(char *model_name, int threadNum) : testPool(model_name, threadNum)
+    RknnWrapper(const char *model_name, int threadNum) : testPool(model_name, threadNum)
     {
         if (testPool.init() != 0)
         {
@@ -28,9 +28,7 @@ public:
     }
 
     bool DequeueMat(cv::Mat *img) {
-        if (testPool.get(*img) != 0) {
-            return false;
-        }
+        return (testPool.get(*img) == 0);
     }
 
     ~RknnWrapper()

@@ -44,7 +44,6 @@ find_package(Threads REQUIRED)
 add_library(${PROJECT_NAME}
     src/main/native/cpp/rknn_jni.cpp
     src/main/native/cpp/rkYolov5s.cc
-    src/main/native/cpp/rknn_wrapper.cc
     src/main/native/cpp/preprocess.cc
     src/main/native/cpp/postprocess.cc
 )
@@ -63,3 +62,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include/3rdparty/rga/RK3588/include
     ${JNI_INCLUDE_DIRS}
 )
+
+add_executable(main_test src/main/native/cpp/main_test.cc)
+target_link_libraries(main_test ${PROJECT_NAME})
