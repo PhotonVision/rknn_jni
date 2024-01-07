@@ -43,7 +43,7 @@ jobs:
 
     - run: |
         chmod +x gradlew
-        ./gradlew build ${{ (startsWith(github.event_name, 'push') && 'publish') || '' }} -PArchOverride=linuxarm64 -x check
+        ./gradlew build ${{ (startsWith(github.event_name, 'push') && '') || '' }} -PArchOverride=linuxarm64 -x check
       env:
         ARTIFACTORY_API_KEY: ${{ secrets.ARTIFACTORY_API_KEY }}
 
