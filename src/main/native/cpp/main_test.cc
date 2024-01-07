@@ -22,7 +22,7 @@ int main(int argc, char **argv)
         if (!wrapper.EnqueueMat(&img)) {
             break;
         }
-        if (!wrapper.DequeueMat(&img)) {
+        if (!wrapper.DequeueMat(&img) && i > 3) {
             break;
         }
 
