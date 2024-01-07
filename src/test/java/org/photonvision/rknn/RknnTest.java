@@ -30,7 +30,7 @@ public class RknnTest {
     @Test
     public void testBasicBlobs() throws IOException {
         // I really really hate this. Someone should fix this for me
-        System.load("/home/matt/Documents/GitHub/photonvision/photon-targeting/build/NativeMain/RawRuntimeLibs/linux/x86-64/shared/libopencv_java480.so");
+        var s = new CvSource();
 
         // This also needs to get fixed
         System.load("/home/matt/Documents/rknn/rknn_java/cmake_build/librknn_java.so");
