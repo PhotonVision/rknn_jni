@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/matt/Documents/rknn/rknn_java/opencv_test/build",
+  "command": "/usr/bin/c++  -isystem /usr/include/opencv4  -o CMakeFiles/main.dir/main.cpp.o -c /home/matt/Documents/rknn/rknn_java/opencv_test/main.cpp",
+  "file": "/home/matt/Documents/rknn/rknn_java/opencv_test/main.cpp"
+}
+]
