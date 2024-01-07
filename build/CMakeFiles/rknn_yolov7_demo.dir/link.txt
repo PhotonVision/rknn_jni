@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/rknn_yolov7_demo.dir/main.cc.o CMakeFiles/rknn_yolov7_demo.dir/postprocess.cc.o CMakeFiles/rknn_yolov7_demo.dir/rknpu2/yolov7.cc.o -o rknn_yolov7_demo  -Wl,-rpath,::::::::::: utils/libfileutils.a utils/libimageutils.a utils/libimagedrawing.a 
