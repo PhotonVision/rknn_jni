@@ -35,6 +35,22 @@ Java_src_main_java_org_photonvision_rknn_RknnJNI_detect(JNIEnv *, jclass, jlong,
                                                         jlong, jint, jint,
                                                         jfloat);
 
+/*
+ * Class:     src_main_java_org_photonvision_rknn_RknnJNI
+ * Method:    create
+ * Signature: (Ljava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL Java_src_main_java_org_photonvision_rknn_RknnJNI_create(
+    JNIEnv *env, jclass, jstring);
+
+/*
+ * Class:     src_main_java_org_photonvision_rknn_RknnJNI
+ * Method:    destroy
+ * Signature: (J)v
+ */
+JNIEXPORT void JNICALL Java_src_main_java_org_photonvision_rknn_RknnJNI_destroy(
+    JNIEnv *env, jclass, jlong ptr);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

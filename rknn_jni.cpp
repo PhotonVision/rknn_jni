@@ -53,13 +53,36 @@ static jobject MakeJObject(JNIEnv *env, const object_detect_result &result) {
 /*
  * Class:     src_main_java_org_photonvision_rknn_RknnJNI
  * Method:    create
- * Signature: ()J
+ * Signature: (Ljava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL
 Java_src_main_java_org_photonvision_rknn_RknnJNI_create
-  (JNIEnv *env, jclass)
+  (JNIEnv *env, jclass, jstring javaString)
 {
-  return reinterpret_cast<jlong>(new RknnYoloWrapper());
+  RknnYoloWrapper *wrapper = new RknnYoloWrapper();
+
+  const char *nativeString = env->GetStringUTFChars(javaString, 0);
+
+  if (!wrapper->init(nativeString)) {
+    env->ReleaseStringUTFChars(javaString, nativeString);
+    delete wrapper;
+    return 0;
+  }
+  env->ReleaseStringUTFChars(javaString, nativeString);
+
+  return reinterpret_cast<jlong>(wrapper);
+}
+
+/*
+ * Class:     src_main_java_org_photonvision_rknn_RknnJNI
+ * Method:    destroy
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL
+Java_src_main_java_org_photonvision_rknn_RknnJNI_destroy
+  (JNIEnv *env, jclass, jlong ptr)
+{
+  delete reinterpret_cast<RknnYoloWrapper *>(ptr);
 }
 
 /*
