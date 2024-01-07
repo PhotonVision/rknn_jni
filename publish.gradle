@@ -1,0 +1,46 @@
+apply plugin: 'maven-publish'
+
+def nativeName = wpilibTools.platformMapper.currentPlatform.platformName;
+def artifactGroupId = 'org.photonvision'
+def baseArtifactId = "photon-libcamera-gl-driver"
+
+task nativeLibraryJar(type: Jar, dependsOn: copyNativeLibrary) {
+    archiveClassifier = nativeName
+    from outputsFolder
+}
+build.dependsOn nativeLibraryJar
+
+publishing {
+    repositories {
+        maven {
+            url ('https://maven.photonvision.org/repository/' + (isDev ? 'snapshots' : 'internal'))
+            credentials {
+                username 'ghactions'
+                password System.getenv("ARTIFACTORY_API_KEY")
+            }
+        }
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = artifactGroupId
+            artifactId = "${baseArtifactId}-java"
+            version = pubVersion;// + "-" + nativeName;
+
+            from components.java
+        }
+        mavenJNI(MavenPublication) {
+            groupId = artifactGroupId
+            artifactId = "${baseArtifactId}-jni"
+            version = pubVersion;// + "-" + nativeName;
+
+            artifact nativeLibraryJar
+        }
+    }
+}
+
+tasks.withType(PublishToMavenRepository) {
+    doFirst {
+        println("Publishing mrcal-java to " + repository.url)
+    }
+}

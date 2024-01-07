@@ -1,0 +1,75 @@
+plugins {
+    id "java"
+    id 'edu.wpi.first.WpilibTools' version '1.3.0'
+    id "edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin" version "2020.2"
+    id "com.diffplug.spotless" version "6.22.0"
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url = "https://maven.photonvision.org/repository/internal/" }
+    }
+    wpilibRepositories.addAllReleaseRepositories(it)
+    wpilibRepositories.addAllDevelopmentRepositories(it)
+}
+
+// Configure the version number.
+apply from: "versioningHelper.gradle"
+
+ext {
+    pubVersion = versionString
+    isDev = pubVersion.startsWith("dev")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+dependencies {
+    // Junit
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+tasks.withType(Javadoc) {
+    options.encoding = 'UTF-8'
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+ext.nativeName = wpilibTools.platformMapper.currentPlatform.platformName;
+ext.outputsFolder = file("$buildDir/outputs")
+
+println("Building for $nativeName")
+
+tasks.register('copyNativeLibrary', Sync) {
+    from "${projectDir}/cmake_build/"
+    into "${outputsFolder}/nativelibraries/${nativeName}/"
+    include "**/*.so"
+
+    // And flatten, since windows is stupid
+    eachFile {
+      println "Coping shared lib: $name"
+      path = name
+    }
+    includeEmptyDirs = false
+
+    build.dependsOn it
+    publish.dependsOn it
+}
+
+apply from: "publish.gradle"

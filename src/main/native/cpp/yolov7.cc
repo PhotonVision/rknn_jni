@@ -20,8 +20,7 @@
 #include "yolov7.h"
 #include "common.h"
 #include "file_utils.h"
-// #include "image_utils.h"
-// #include "easy_timer.h"
+#include "postprocess.h"
 
 static void dump_tensor_attr(rknn_tensor_attr *attr)
 {

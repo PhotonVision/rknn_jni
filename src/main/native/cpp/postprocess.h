@@ -19,18 +19,12 @@
 #define RKNN_JAVA_POSTPROCESS_H_
 
 #include <stdint.h>
-#include <yolov7.h>
+#include "yolov7.h"
 
 #include <vector>
 
 #include "common.h"
 #include "rknn_api.h"
-
-#define OBJ_NAME_MAX_SIZE 64
-#define OBJ_CLASS_NUM 80
-#define NMS_THRESH 0.45
-#define BOX_THRESH 0.25
-#define PROP_BOX_SIZE (5 + OBJ_CLASS_NUM)
 
 int init_post_process();
 void deinit_post_process();

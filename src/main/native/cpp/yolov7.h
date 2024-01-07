@@ -32,8 +32,6 @@ typedef struct {
   bool is_quant;
 } rknn_app_context_t;
 
-#include "postprocess.h"
-
 int init_yolov7_model(const char *model_path, rknn_app_context_t *app_ctx);
 
 int release_yolov7_model(rknn_app_context_t *app_ctx);

@@ -11,9 +11,6 @@ if (ENABLE_ASAN)
 	set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 endif ()
 
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../3rdparty/ 3rdparty.out)
-# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/ utils.out)
-
 set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
 
 file(GLOB SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
@@ -29,10 +26,10 @@ endif()
 
 
 add_library(${PROJECT_NAME}
-    rknn_yolo_wrapper.cc
-    rknn_jni.cpp
-    postprocess.cc
-    rknpu2/yolov7.cc
+    src/main/native/cpp/rknn_yolo_wrapper.cc
+    src/main/native/cpp/rknn_jni.cpp
+    src/main/native/cpp/postprocess.cc
+    src/main/native/cpp/yolov7.cc
 )
 
 
