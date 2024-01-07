@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(rknn_yolov7_demo)
 
+add_subdirectory(librga-rockchip)
 add_subdirectory(utils)
 
 if (ENABLE_ASAN)

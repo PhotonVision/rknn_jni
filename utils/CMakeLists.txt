@@ -28,7 +28,7 @@ target_include_directories(imageutils PUBLIC
 
 target_link_libraries(imageutils
     ${LIBJPEG}
-    ${LIBRGA}
+    rga
 )
 
 target_include_directories(imageutils PUBLIC
