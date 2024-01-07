@@ -65,3 +65,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 add_executable(main_test src/main/native/cpp/main_test.cc)
 target_link_libraries(main_test ${PROJECT_NAME})
+target_include_directories(main_test PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include
+)
