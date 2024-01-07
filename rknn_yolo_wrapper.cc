@@ -31,7 +31,7 @@ RknnYoloWrapper::RknnYoloWrapper() {
 
 bool RknnYoloWrapper::init(const char* model_path) {
     int ret = init_yolov7_model(model_path, &rknn_app_ctx);
-    
+
     return ret == 0;
 }
 

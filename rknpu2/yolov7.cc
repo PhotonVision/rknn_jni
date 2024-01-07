@@ -156,7 +156,7 @@ int release_yolov7_model(rknn_app_context_t *app_ctx)
     return 0;
 }
 
-int inference_yolov7_raw(rknn_app_context_t* app_ctx, uint8_t *image_ptr,  letterbox_t letter_box, object_detect_result_list* od_results) { 
+int inference_yolov7_raw(rknn_app_context_t* app_ctx, uint8_t *image_ptr,  letterbox_t letter_box, object_detect_result_list* od_results) {
     int ret;
     rknn_input inputs[app_ctx->io_num.n_input];
     rknn_output outputs[app_ctx->io_num.n_output];

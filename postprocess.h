@@ -1,43 +1,43 @@
-#ifndef _RKNN_YOLOV5_DEMO_POSTPROCESS_H_
-#define _RKNN_YOLOV5_DEMO_POSTPROCESS_H_
+/*
+ * Copyright (C) Photon Vision.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#ifndef RKNN_JAVA_POSTPROCESS_H_
+#define RKNN_JAVA_POSTPROCESS_H_
 
 #include <stdint.h>
+#include <yolov7.h>
+
 #include <vector>
-#include "rknn_api.h"
+
 #include "common.h"
-// #include "image_utils.h"
+#include "rknn_api.h"
 
 #define OBJ_NAME_MAX_SIZE 64
-#define OBJ_NUMB_MAX_SIZE 128
 #define OBJ_CLASS_NUM 80
 #define NMS_THRESH 0.45
 #define BOX_THRESH 0.25
 #define PROP_BOX_SIZE (5 + OBJ_CLASS_NUM)
 
-// class rknn_app_context_t;
-
-typedef struct {
-    int x_pad;
-    int y_pad;
-    float scale;
-} letterbox_t;
-
-typedef struct {
-    image_rect_t box;
-    float prop;
-    int cls_id;
-} object_detect_result;
-
-typedef struct {
-    int id;
-    int count; // Number of results (ew)
-    object_detect_result results[OBJ_NUMB_MAX_SIZE];
-} object_detect_result_list;
-
 int init_post_process();
 void deinit_post_process();
 char *coco_cls_to_name(int cls_id);
-int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, letterbox_t *letter_box, float conf_threshold, float nms_threshold, object_detect_result_list *od_results);
+int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs,
+                 letterbox_t *letter_box, float conf_threshold,
+                 float nms_threshold, object_detect_result_list *od_results);
 
 void deinitPostProcess();
-#endif //_RKNN_YOLOV5_DEMO_POSTPROCESS_H_
+#endif // RKNN_JAVA_POSTPROCESS_H_
