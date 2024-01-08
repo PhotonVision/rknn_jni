@@ -70,49 +70,21 @@ public class RknnTest {
         System.out.println(Core.getBuildInformation());
         System.out.println(Core.OpenCLApiCallError);
 
-        long start, end;
-        start = System.currentTimeMillis();
-        var net = Dnn.readNetFromDarknet(
-                "/home/matt/Downloads/yolov4-csp-swish.cfg",
-                "/home/matt/Downloads/yolov4-csp-swish.weights");
-        
 
-        end = System.currentTimeMillis();
-        System.out.println("Read (ms): " + (end - start));
-
-        System.out.println("Setting backends");
-
-        net.setPreferableBackend(Dnn.DNN_BACKEND_OPENCV); 
-        net.setPreferableTarget(Dnn.DNN_TARGET_OPENCL); 
-        // net.setPreferableBackend(Dnn.DNN_BACKEND_OPENCV); 
-        // net.setPreferableTarget(Dnn.DNN_TARGET_CPU); 
-        // net.setPreferableBackend(Dnn.DNN_BACKEND_CUDA); 
-        // net.setPreferableTarget(Dnn.DNN_TARGET_CUDA); 
-
+        System.out.println("Loading bus");
         Mat img = Imgcodecs.imread("src/test/resources/bus.jpg");
-        System.out.println(img);
 
-        start = System.currentTimeMillis();
-        var blob = Dnn.blobFromImage(img, 1.0 / 255.0, new Size(640, 640));
-        end = System.currentTimeMillis();
-        System.out.println("Blob (ms): " + (end - start));
+        System.out.println("Loading rknn-jni");
+        System.load("/home/coolpi/rknn_java/cmake_build/librknn_jni.so");
 
-        for (int i = 0; i < 10; i++) {
-            start = System.currentTimeMillis();
-            net.setInput(blob);
-            end = System.currentTimeMillis();
-            System.out.println("SetInput (ms): " + (end - start));
-            List<Mat> result = new ArrayList<>();
-            var outBlobNames = getOutputNames(net);
-            System.out.println(outBlobNames);
-            start = System.currentTimeMillis();
-            net.forward(result, outBlobNames);
-            end = System.currentTimeMillis();
-            System.out.println("Forward (ms): " + (end - start));
-            // System.out.println(result.stream().map(Mat::dump).collect(Collectors.joining(", ")));
-        }
+        System.out.println("Creating detector");
+        long ptr = RknnJNI.create("/home/coolpi/rknn_java/src/test/resources/RK3588/yolov5s-640-640.rknn");
+        
+        System.out.println("Running detector");
+        var ret = RknnJNI.detect(ptr, img.getNativeObjAddr());
+        System.out.println(Arrays.toString(ret));
 
-        img.release();
-        blob.release();
+        System.out.println("Killing detector");
+        RknnJNI.destroy(ptr);
     }
 }

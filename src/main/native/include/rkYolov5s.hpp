@@ -2,6 +2,7 @@
 #define RKYOLOV5S_H
 
 #include "rknn_api.h"
+#include "postprocess.h"
 
 #include "opencv2/core/core.hpp"
 

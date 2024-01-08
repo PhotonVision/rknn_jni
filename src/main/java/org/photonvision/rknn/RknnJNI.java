@@ -28,8 +28,6 @@ public class RknnJNI {
     public static native long destroy(long ptr);
 
     public static native RknnResult[] detect(
-        long detectorPtr, long blobNCHWPtr,
-        // letterbox config for rescaling output
-        int x_pad, int y_pad, float scale
+        long detectorPtr, long imagePtr
     );
 }
