@@ -67,19 +67,24 @@ void trydnn()
     using namespace cv::dnn;
     using namespace cv;
     auto net = readNetFromDarknet(
-        "/home/matt/Downloads/yolov4-csp-swish.cfg",
-        "/home/matt/Downloads/yolov4-csp-swish.weights");
+        "/home/coolpi/rknn_java/opencv_test/yolov4-csp-swish.cfg",
+        "/home/coolpi/rknn_java/opencv_test/yolov4-csp-swish.weights");
 
     net.setPreferableBackend(DNN_BACKEND_OPENCV);
     net.setPreferableTarget(DNN_TARGET_OPENCL);
 
 
-    auto img = cv::imread("../src/test/resources/bus.jpg");
-    auto blob = blobFromImage(img, 1.0 / 255.0, {640, 640});
 
     cout << "got names\n";
 
     std::vector<String> names = net.getUnconnectedOutLayersNames();
+    for (const auto& n : names) cout << n << " ";
+    cout << endl;
+    
+
+    auto img = cv::imread("../../src/test/resources/bus.jpg");
+    auto blob = blobFromImage(img, 1.0 / 255.0, {640, 640});
+
     // std::vector<String> names = {
     //     "yolo_167", "yolo_171", "yolo_175"};
 
