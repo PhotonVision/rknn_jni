@@ -34,6 +34,10 @@ public:
     int init(rknn_context *ctx_in, bool isChild);
     rknn_context *get_pctx();
     cv::Mat infer(cv::Mat &ori_img);
+    /**
+     * Run forward inference only, returning resulting detections
+    */
+    int inferOnly(cv::Mat &orig_img, detect_result_group_t *outReults);
     ~rkYolov5s();
 };
 

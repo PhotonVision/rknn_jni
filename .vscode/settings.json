@@ -11,7 +11,9 @@
         "istream": "cpp",
         "functional": "cpp",
         "tuple": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "typeindex": "cpp",
+        "typeinfo": "cpp"
     },
     "java.configuration.updateBuildConfiguration": "automatic"
 }

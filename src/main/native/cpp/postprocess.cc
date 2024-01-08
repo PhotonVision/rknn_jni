@@ -23,9 +23,6 @@
 
 #include <set>
 #include <vector>
-#define LABEL_NALE_TXT_PATH "./model/coco_80_labels_list.txt"
-
-static char *labels[OBJ_CLASS_NUM];
 
 const int anchor0[6] = {10, 13, 16, 30, 33, 23};
 const int anchor1[6] = {30, 61, 62, 45, 59, 119};
@@ -261,18 +258,6 @@ int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h,
                  float nms_threshold, BOX_RECT pads, float scale_w, float scale_h, std::vector<int32_t> &qnt_zps,
                  std::vector<float> &qnt_scales, detect_result_group_t *group)
 {
-  static int init = -1;
-  if (init == -1)
-  {
-    int ret = 0;
-    ret = loadLabelName(LABEL_NALE_TXT_PATH, labels);
-    if (ret < 0)
-    {
-      return -1;
-    }
-
-    init = 0;
-  }
   memset(group, 0, sizeof(detect_result_group_t));
 
   std::vector<float> filterBoxes;
@@ -347,9 +332,11 @@ int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h,
     group->results[last_count].box.top = (int)(clamp(y1, 0, model_in_h) / scale_h);
     group->results[last_count].box.right = (int)(clamp(x2, 0, model_in_w) / scale_w);
     group->results[last_count].box.bottom = (int)(clamp(y2, 0, model_in_h) / scale_h);
-    group->results[last_count].prop = obj_conf;
-    char *label = labels[id];
-    strncpy(group->results[last_count].name, label, OBJ_NAME_MAX_SIZE);
+    group->results[last_count].obj_conf = obj_conf;
+    group->results[last_count].id = id;
+
+    // char *label = labels[id];
+    // strncpy(group->results[last_count].name, label, OBJ_NAME_MAX_SIZE);
 
     // printf("result %2d: (%4d, %4d, %4d, %4d), %s\n", i, group->results[last_count].box.left,
     // group->results[last_count].box.top,
@@ -359,16 +346,4 @@ int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h,
   group->count = last_count;
 
   return 0;
-}
-
-void deinitPostProcess()
-{
-  for (int i = 0; i < OBJ_CLASS_NUM; i++)
-  {
-    if (labels[i] != nullptr)
-    {
-      free(labels[i]);
-      labels[i] = nullptr;
-    }
-  }
 }

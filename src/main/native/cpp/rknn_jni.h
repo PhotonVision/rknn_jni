@@ -29,7 +29,7 @@ JNIEXPORT void JNICALL Java_org_photonvision_rknn_RknnJNI_destroy
  * Signature: (JJIIF)[Lorg/photonvision/rknn/RknnJNI/RknnResult;
  */
 JNIEXPORT jobjectArray JNICALL Java_org_photonvision_rknn_RknnJNI_detect
-  (JNIEnv *, jclass, jlong, jlong, jint, jint, jfloat);
+  (JNIEnv *, jclass, jlong, jlong);
 
 #ifdef __cplusplus
 }

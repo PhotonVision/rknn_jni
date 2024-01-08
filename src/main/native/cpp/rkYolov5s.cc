@@ -281,16 +281,13 @@ cv::Mat rkYolov5s::infer(cv::Mat &orig_img)
     for (int i = 0; i < detect_result_group.count; i++)
     {
         detect_result_t *det_result = &(detect_result_group.results[i]);
-        sprintf(text, "%s %.1f%%", det_result->name, det_result->prop * 100);
-        // 打印预测物体的信息/Prints information about the predicted object
-        // printf("%s @ (%d %d %d %d) %f\n", det_result->name, det_result->box.left, det_result->box.top,
-        //        det_result->box.right, det_result->box.bottom, det_result->prop);
+        sprintf(text, "%i %.1f%%", det_result->id, det_result->obj_conf * 100);
         int x1 = det_result->box.left;
         int y1 = det_result->box.top;
         int x2 = det_result->box.right;
         int y2 = det_result->box.bottom;
-        rectangle(orig_img, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(256, 0, 0, 256), 3);
-        putText(orig_img, text, cv::Point(x1, y1 + 12), cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(255, 255, 255));
+        // rectangle(orig_img, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(256, 0, 0, 256), 3);
+        // putText(orig_img, text, cv::Point(x1, y1 + 12), cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(255, 255, 255));
     }
 
     ret = rknn_outputs_release(ctx, io_num.n_output, outputs);
@@ -298,10 +295,81 @@ cv::Mat rkYolov5s::infer(cv::Mat &orig_img)
     return orig_img;
 }
 
+int rkYolov5s::inferOnly(cv::Mat &orig_img, detect_result_group_t *out_results)
+{
+    std::lock_guard<std::mutex> lock(mtx);
+    cv::Mat img;
+    cv::cvtColor(orig_img, img, cv::COLOR_BGR2RGB);
+    img_width = img.cols;
+    img_height = img.rows;
+
+    BOX_RECT pads;
+    memset(&pads, 0, sizeof(BOX_RECT));
+    cv::Size target_size(width, height);
+    cv::Mat resized_img(target_size.height, target_size.width, CV_8UC3);
+    // 计算缩放比例/Calculate the scaling ratio
+    float scale_w = (float)target_size.width / img.cols;
+    float scale_h = (float)target_size.height / img.rows;
+
+    // 图像缩放/Image scaling
+    if (img_width != width || img_height != height)
+    {
+        // rga
+        rga_buffer_t src;
+        rga_buffer_t dst;
+        memset(&src, 0, sizeof(src));
+        memset(&dst, 0, sizeof(dst));
+        ret = resize_rga(src, dst, img, resized_img, target_size);
+        if (ret != 0)
+        {
+            fprintf(stderr, "resize with rga error\n");
+        }
+        /*********
+        // opencv
+        float min_scale = std::min(scale_w, scale_h);
+        scale_w = min_scale;
+        scale_h = min_scale;
+        letterbox(img, resized_img, pads, min_scale, target_size);
+        *********/
+        inputs[0].buf = resized_img.data;
+    }
+    else
+    {
+        inputs[0].buf = img.data;
+    }
+
+    rknn_inputs_set(ctx, io_num.n_input, inputs);
+
+    rknn_output outputs[io_num.n_output];
+    memset(outputs, 0, sizeof(outputs));
+    for (int i = 0; i < io_num.n_output; i++)
+    {
+        outputs[i].want_float = 0;
+    }
+
+    // 模型推理/Model inference
+    ret = rknn_run(ctx, NULL);
+    ret = rknn_outputs_get(ctx, io_num.n_output, outputs, NULL);
+
+    // 后处理/Post-processing
+    std::vector<float> out_scales;
+    std::vector<int32_t> out_zps;
+    for (int i = 0; i < io_num.n_output; ++i)
+    {
+        out_scales.push_back(output_attrs[i].scale);
+        out_zps.push_back(output_attrs[i].zp);
+    }
+
+    post_process((int8_t *)outputs[0].buf, (int8_t *)outputs[1].buf, (int8_t *)outputs[2].buf, height, width,
+                 box_conf_threshold, nms_threshold, pads, scale_w, scale_h, out_zps, out_scales, out_results);
+
+    ret = rknn_outputs_release(ctx, io_num.n_output, outputs);
+
+    return ret;
+}
+
 rkYolov5s::~rkYolov5s()
 {
-    deinitPostProcess();
-
     ret = rknn_destroy(ctx);
 
     if (model_data)

@@ -45,15 +45,15 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 
 
 
-// static jobject MakeJObject(JNIEnv *env, const detect_result_t &result) {
-//   jmethodID constructor =
-//       env->GetMethodID(detectionResultClass, "<init>", "(IIIIFI)V");
+static jobject MakeJObject(JNIEnv *env, const detect_result_t &result) {
+  jmethodID constructor =
+      env->GetMethodID(detectionResultClass, "<init>", "(IIIIFI)V");
 
-//   // Actually call the constructor
-//   return env->NewObject(detectionResultClass, constructor, result.box.left,
-//                         result.box.top, result.box.right, result.box.bottom,
-//                         result.prop, result.cls_id);
-// }
+  // Actually call the constructor
+  return env->NewObject(detectionResultClass, constructor, result.box.left,
+                        result.box.top, result.box.right, result.box.bottom,
+                        result.obj_conf, result.id);
+}
 
 /*
  * Class:     org_photonvision_rknn_RknnJNI
@@ -67,7 +67,7 @@ Java_org_photonvision_rknn_RknnJNI_create
   const char *nativeString = env->GetStringUTFChars(javaString, 0);
   printf("Creating for %s\n", nativeString);
 
-  auto ret = new RknnWrapper(nativeString, 3);
+  auto ret = new RknnWrapper(nativeString);
   env->ReleaseStringUTFChars(javaString, nativeString);
   return reinterpret_cast<jlong>(ret);
 }
@@ -91,10 +91,26 @@ Java_org_photonvision_rknn_RknnJNI_destroy
  */
 JNIEXPORT jobjectArray JNICALL
 Java_org_photonvision_rknn_RknnJNI_detect
-  (JNIEnv *env, jclass, jlong detector_, jlong blob, jint x_pad, jint y_pad,
-   jfloat scale)
+  (JNIEnv *env, jclass, jlong detector_, jlong cvMatPtr)
 {
+  RknnWrapper *yolo = reinterpret_cast<RknnWrapper *>(detector_);
+  cv::Mat *input_img = reinterpret_cast<cv::Mat*>(cvMatPtr);
 
+  auto results = yolo->forward(*input_img);
+
+  if (results.count < 1) {
+    return nullptr;
+  }
+
+  jobjectArray jarr =
+      env->NewObjectArray(results.count, detectionResultClass, nullptr);
+
+  for (size_t i = 0; i < results.count; i++) {
+    jobject obj = MakeJObject(env, results.results[i]);
+    env->SetObjectArrayElement(jarr, i, obj);
+  }
+
+  return jarr;
 }
 
 } // Extern "C"
