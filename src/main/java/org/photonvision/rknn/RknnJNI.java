@@ -21,7 +21,22 @@ public class RknnJNI {
     public static class RknnResult {
         public RknnResult(
             int left, int top, int right, int bottom, float conf, int class_id
-        ) {}
+        ) {
+            this.left = left;
+            this.right = right;
+            this.bottom = bottom;
+            this.top = top;
+            this.conf = conf;
+            this.class_id = class_id;
+
+        }
+
+        public final int left;
+        public final int right;
+        public final int bottom;
+        public final int top;
+        public final float conf;
+        public final int class_id;
     }
 
     public static native long create(String modelPath);
