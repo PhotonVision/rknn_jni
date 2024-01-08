@@ -2,7 +2,7 @@ apply plugin: 'maven-publish'
 
 def nativeName = wpilibTools.platformMapper.currentPlatform.platformName;
 def artifactGroupId = 'org.photonvision'
-def baseArtifactId = "photon-libcamera-gl-driver"
+def baseArtifactId = "rknn_jni"
 
 task nativeLibraryJar(type: Jar, dependsOn: copyNativeLibrary) {
     archiveClassifier = nativeName

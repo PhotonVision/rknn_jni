@@ -36,8 +36,8 @@ jobs:
         commands: |
             apt-get update
             apt-get install -y cmake build-essential default-jdk openjdk-17-jdk
-            cmake -B cmake_build -DCMAKE_BUILD_TYPE=Release
-            cmake --build cmake_build -j 4
+            cmake -B cmake_build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=.
+            cmake --build cmake_build --target install -- -j 4
 
     - run: find .
 

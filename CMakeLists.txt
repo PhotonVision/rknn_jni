@@ -63,6 +63,15 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${JNI_INCLUDE_DIRS}
 )
 
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+        INSTALL_RPATH "\\\$ORIGIN/"
+)
+
+include(GNUInstallDirs)
+install(TARGETS ${PROJECT_NAME})
+install(FILES ${RKNN_RT_LIB} ${RGA_LIB} TYPE LIB)
+
 add_executable(main_test src/main/native/cpp/main_test.cc)
 target_link_libraries(main_test ${PROJECT_NAME})
 target_include_directories(main_test PRIVATE 
