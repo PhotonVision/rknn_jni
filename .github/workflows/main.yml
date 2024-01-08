@@ -36,7 +36,7 @@ jobs:
         commands: |
             apt-get update
             apt-get install -y cmake build-essential default-jdk openjdk-17-jdk
-            cmake -B cmake_build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=. -DOPENCV_ARCH=linuxarm64
+            cmake -B cmake_build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_build -DOPENCV_ARCH=linuxarm64
             cmake --build cmake_build --target install -- -j 4
 
     - run: find .
