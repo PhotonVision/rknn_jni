@@ -33,8 +33,37 @@ set(LIB_ARCH aarch64)
 set(RGA_PATH ${CMAKE_SOURCE_DIR}/src/main/native/include/3rdparty/rga/RK3588)
 set(RGA_LIB ${RGA_PATH}/lib/Linux/${LIB_ARCH}/librga.so)
 
-# opencv
-find_package(OpenCV REQUIRED)
+
+set(OPENCV_YEAR "frc2024")
+set(OPENCV_VERSION "4.8.0-2")
+# also valid: windowsx86-64
+
+# type can be "", "debug", "static", or "staticdebug"
+set(OPENCV_TYPE "")
+
+# Download opencv, and save the path
+include(FetchContent)
+FetchContent_Declare(
+    opencv_lib
+    URL https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/${OPENCV_YEAR}/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-${OPENCV_ARCH}${OPENCV_TYPE}.zip
+)
+FetchContent_MakeAvailable(opencv_lib)
+
+# download OpenCV headers
+FetchContent_Declare(
+    opencv_header
+    URL https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/${OPENCV_YEAR}/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-headers.zip
+)
+FetchContent_MakeAvailable(opencv_header)
+
+# This probably doesn't work great with shared libraries, but I don't care about those right now
+file(GLOB_RECURSE OPENCV_LIB_PATH
+  "${opencv_lib_SOURCE_DIR}/**/*.lib"
+  "${opencv_lib_SOURCE_DIR}/**/*.so*"
+)
+SET(OPENCV_INCLUDE_PATH ${opencv_header_SOURCE_DIR})
+message("Depending on opencv ${OPENCV_LIB_PATH}")
+
 
 set(CMAKE_INSTALL_RPATH "lib")
 
@@ -51,7 +80,7 @@ add_library(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} 
     Threads::Threads
     ${RKNN_RT_LIB}
-    ${OpenCV_LIBS}
+    ${OPENCV_LIB_PATH}
     ${RGA_LIB}
     )
 
@@ -61,6 +90,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include/3rdparty/rga/RK3588/include
     ${JNI_INCLUDE_DIRS}
+    ${OPENCV_INCLUDE_PATH}
 )
 
 set_target_properties(${PROJECT_NAME}
@@ -76,4 +106,5 @@ add_executable(main_test src/main/native/cpp/main_test.cc)
 target_link_libraries(main_test ${PROJECT_NAME})
 target_include_directories(main_test PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include
+    ${OPENCV_INCLUDE_PATH}
 )
