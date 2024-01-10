@@ -15,9 +15,10 @@ private:
     rkYolov5s yolo;
 
 public:
-    RknnWrapper(const char *model_name) 
-        : yolo(model_name) 
-    { }
+    RknnWrapper(const char *model_name) : yolo(model_name) 
+    { 
+        yolo.init(yolo.get_pctx(), false);
+    }
 
     detect_result_group_t forward(cv::Mat &img) {
         detect_result_group_t ret;
