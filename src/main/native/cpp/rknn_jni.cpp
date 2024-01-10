@@ -95,7 +95,7 @@ Java_org_photonvision_rknn_RknnJNI_detect
 {
   RknnWrapper *yolo = reinterpret_cast<RknnWrapper *>(detector_);
   cv::Mat *input_img = reinterpret_cast<cv::Mat*>(cvMatPtr);
-
+  
   auto results = yolo->forward(*input_img);
 
   if (results.count < 1) {

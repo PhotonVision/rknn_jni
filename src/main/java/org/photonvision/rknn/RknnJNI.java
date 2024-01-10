@@ -30,7 +30,9 @@ public class RknnJNI {
             this.class_id = class_id;
 
         }
-
+        public String toString() {
+            return "Left: " + left + "\nRight: " + right + "\nBottom: " + bottom + "\nTop: " + top + "\nConf: " + conf + "\nClass Id: " + class_id;
+        }
         public final int left;
         public final int right;
         public final int bottom;

@@ -60,6 +60,7 @@ public class RknnTest {
     public void testBasicBlobs() {
         // I really really hate this. Someone should fix this for me
         // var s = new CvSink("guh");
+
         try {
             CombinedRuntimeLoader.loadLibraries(RknnTest.class, Core.NATIVE_LIBRARY_NAME);
         } catch (IOException e) {
@@ -70,15 +71,15 @@ public class RknnTest {
         System.out.println(Core.getBuildInformation());
         System.out.println(Core.OpenCLApiCallError);
 
-
+         
         System.out.println("Loading bus");
         Mat img = Imgcodecs.imread("src/test/resources/bus.jpg");
 
         System.out.println("Loading rknn-jni");
-        System.load("/home/coolpi/rknn_java/cmake_build/librknn_jni.so");
+        System.load("/home/mdurrani808/photon-testing/rknn_jni/cmake_build/librknn_jni.so");
 
         System.out.println("Creating detector");
-        long ptr = RknnJNI.create("/home/coolpi/rknn_java/src/test/resources/RK3588/yolov5s-640-640.rknn");
+        long ptr = RknnJNI.create("/home/mdurrani808/photon-testing/rknn_jni/src/test/resources/RK3588/yolov5s-640-640.rknn");
         
         System.out.println("Running detector");
         var ret = RknnJNI.detect(ptr, img.getNativeObjAddr());

@@ -66,6 +66,10 @@ java {
 
 test {
     useJUnitPlatform()
+    testLogging {
+        outputs.upToDateWhen {false}
+        showStandardStreams = true
+    }
 }
 
 ext.nativeName = wpilibTools.platformMapper.currentPlatform.platformName;
