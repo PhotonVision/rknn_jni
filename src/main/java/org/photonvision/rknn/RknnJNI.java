@@ -30,7 +30,7 @@ public class RknnJNI {
             this.rect = new Rect2d(new Point(left, top), new Point(right, bottom));
         }
         
-        Rect2d rect;
+        public final Rect2d rect;
         public final float conf;
         public final int class_id;
 
