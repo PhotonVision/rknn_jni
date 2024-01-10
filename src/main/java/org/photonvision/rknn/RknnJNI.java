@@ -17,28 +17,58 @@
 
 package org.photonvision.rknn;
 
+import org.opencv.core.Point;
+import org.opencv.core.Rect2d;
+
 public class RknnJNI {
     public static class RknnResult {
         public RknnResult(
             int left, int top, int right, int bottom, float conf, int class_id
         ) {
-            this.left = left;
-            this.right = right;
-            this.bottom = bottom;
-            this.top = top;
             this.conf = conf;
             this.class_id = class_id;
-
+            this.rect = new Rect2d(new Point(left, top), new Point(right, bottom));
         }
-        public String toString() {
-            return "Left: " + left + "\nRight: " + right + "\nBottom: " + bottom + "\nTop: " + top + "\nConf: " + conf + "\nClass Id: " + class_id;
-        }
-        public final int left;
-        public final int right;
-        public final int bottom;
-        public final int top;
+        
+        Rect2d rect;
         public final float conf;
         public final int class_id;
+
+        @Override
+        public String toString() {
+            return "RknnResult [rect=" + rect + ", conf=" + conf + ", class_id=" + class_id + "]";
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((rect == null) ? 0 : rect.hashCode());
+            result = prime * result + Float.floatToIntBits(conf);
+            result = prime * result + class_id;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            RknnResult other = (RknnResult) obj;
+            if (rect == null) {
+                if (other.rect != null)
+                    return false;
+            } else if (!rect.equals(other.rect))
+                return false;
+            if (Float.floatToIntBits(conf) != Float.floatToIntBits(other.conf))
+                return false;
+            if (class_id != other.class_id)
+                return false;
+            return true;
+        }
     }
 
     public static native long create(String modelPath);
