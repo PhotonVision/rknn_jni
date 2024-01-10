@@ -45,7 +45,7 @@ set(OPENCV_TYPE "")
 include(FetchContent)
 FetchContent_Declare(
     opencv_lib
-    URL https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/${OPENCV_YEAR}/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-linuxarm64${OPENCV_TYPE}.zip
+    URL https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/${OPENCV_YEAR}/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-${OPENCV_ARCH}${OPENCV_TYPE}.zip
 )
 FetchContent_MakeAvailable(opencv_lib)
 
