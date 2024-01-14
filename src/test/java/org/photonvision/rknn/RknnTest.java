@@ -79,10 +79,10 @@ public class RknnTest {
         System.load("/home/mdurrani808/photon-testing/rknn_jni/cmake_build/librknn_jni.so");
 
         System.out.println("Creating detector");
-        long ptr = RknnJNI.create("/home/mdurrani808/photon-testing/rknn_jni/src/test/resources/RK3588/yolov5s-640-640.rknn");
+        long ptr = RknnJNI.create("/home/mdurrani808/photon-testing/rknn_jni/src/test/resources/RK3588/yolov5s-640-640.rknn", 80);
         
         System.out.println("Running detector");
-        var ret = RknnJNI.detect(ptr, img.getNativeObjAddr());
+        var ret = RknnJNI.detect(ptr, img.getNativeObjAddr(), .45, .25);
         System.out.println(Arrays.toString(ret));
 
         System.out.println("Killing detector");
