@@ -86,7 +86,6 @@ public class RknnJNI {
      * @param imagePtr Pointer to a cv::Mat input image
      * @param nmsThresh 
      * @param boxThresh
-     * @param maxDetections
      */
     public static native RknnResult[] detect(
         long detectorPtr, long imagePtr, double nmsThresh, double boxThresh
