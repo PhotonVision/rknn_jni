@@ -1,3 +1,3 @@
-Stuffs from https://github.com/airockchip/rknn_model_zoo/blob/main/3rdparty/rknpu2/Linux/aarch64/librknnrt.so
+Code adapted from https://github.com/leafqycc/rknn-cpp-Multithreading/ , licensed under Apache 2.0. JNI written around this code and licensed under GPL V3.
 
-Convert with `python3 convert.py /home/matt/Documents/rknn/rknn_java/src/test/resources/yolov7-tiny.onnx rk3588`
+Model conversion process is a bit of a pain; detailed docs coming soontm.
