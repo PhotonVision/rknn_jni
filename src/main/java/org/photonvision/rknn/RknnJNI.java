@@ -71,10 +71,24 @@ public class RknnJNI {
         }
     }
 
-    public static native long create(String modelPath);
+    /**
+     * Create a RKNN detector. Returns valid pointer on success, or NULL on error
+     * @param modelPath Absolute path to the model on disk
+     * @param numClasses How many classes. MUST MATCH or native code segfaults
+     * @return
+     */
+    public static native long create(String modelPath, int numClasses);
     public static native long destroy(long ptr);
 
+    /**
+     * Run detction
+     * @param detectorPtr Pointer to detector created above
+     * @param imagePtr Pointer to a cv::Mat input image
+     * @param nmsThresh 
+     * @param boxThresh
+     * @param maxDetections
+     */
     public static native RknnResult[] detect(
-        long detectorPtr, long imagePtr
+        long detectorPtr, long imagePtr, double nmsThresh, double boxThresh, int maxDetections
     );
 }

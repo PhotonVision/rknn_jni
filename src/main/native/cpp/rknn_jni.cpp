@@ -16,11 +16,13 @@
  */
 
 #include "rknn_jni.h"
-#include "postprocess.h"
+
 #include <cstdio>
+
+#include "postprocess.h"
 #include "rkYolov5s.hpp"
-#include "wpi_jni_common.h"
 #include "rknn_wrapper.h"
+#include "wpi_jni_common.h"
 
 static JClass detectionResultClass;
 
@@ -43,8 +45,6 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
   return JNI_VERSION_1_6;
 }
 
-
-
 static jobject MakeJObject(JNIEnv *env, const detect_result_t &result) {
   jmethodID constructor =
       env->GetMethodID(detectionResultClass, "<init>", "(IIIIFI)V");
@@ -58,16 +58,16 @@ static jobject MakeJObject(JNIEnv *env, const detect_result_t &result) {
 /*
  * Class:     org_photonvision_rknn_RknnJNI
  * Method:    create
- * Signature: (Ljava/lang/String;)J
+ * Signature: (Ljava/lang/String;I)J
  */
 JNIEXPORT jlong JNICALL
 Java_org_photonvision_rknn_RknnJNI_create
-  (JNIEnv *env, jclass, jstring javaString)
+  (JNIEnv *env, jclass, jstring javaString, jint numClasses)
 {
   const char *nativeString = env->GetStringUTFChars(javaString, 0);
-  printf("Creating for %s\n", nativeString);
+  std::printf("Creating for %s\n", nativeString);
 
-  auto ret = new RknnWrapper(nativeString);
+  auto ret = new RknnWrapper(nativeString, numClasses);
   env->ReleaseStringUTFChars(javaString, nativeString);
   return reinterpret_cast<jlong>(ret);
 }
@@ -81,22 +81,27 @@ JNIEXPORT void JNICALL
 Java_org_photonvision_rknn_RknnJNI_destroy
   (JNIEnv *env, jclass, jlong ptr)
 {
-  delete reinterpret_cast<RknnWrapper *>(ptr); 
+  delete reinterpret_cast<RknnWrapper *>(ptr);
 }
 
 /*
  * Class:     org_photonvision_rknn_RknnJNI
  * Method:    detect
- * Signature: (JJIIF)[Ljava/lang/Object;
+ * Signature: (JJDDI)[Ljava/lang/Object;
  */
 JNIEXPORT jobjectArray JNICALL
 Java_org_photonvision_rknn_RknnJNI_detect
-  (JNIEnv *env, jclass, jlong detector_, jlong cvMatPtr)
+  (JNIEnv *env, jclass, jlong detector_, jlong input_cvmat_ptr,
+   jdouble nms_thresh, jdouble box_thresh, jint max_detections)
 {
   RknnWrapper *yolo = reinterpret_cast<RknnWrapper *>(detector_);
-  cv::Mat *input_img = reinterpret_cast<cv::Mat*>(cvMatPtr);
-  
-  auto results = yolo->forward(*input_img);
+  cv::Mat *input_img = reinterpret_cast<cv::Mat *>(input_cvmat_ptr);
+
+  DetectionFilterParams params{
+      .nms_thresh = nms_thresh,
+      .box_thresh = box_thresh,
+  };
+  auto results = yolo->forward(*input_img, params);
 
   if (results.count < 1) {
     return nullptr;
@@ -113,4 +118,4 @@ Java_org_photonvision_rknn_RknnJNI_detect
   return jarr;
 }
 
-} // Extern "C"
+} // extern "C"

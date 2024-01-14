@@ -90,13 +90,6 @@ int readLines(const char *fileName, char *lines[], int max_line)
   return i;
 }
 
-int loadLabelName(const char *locationFilename, char *label[])
-{
-  printf("loadLabelName %s\n", locationFilename);
-  readLines(locationFilename, label, OBJ_CLASS_NUM);
-  return 0;
-}
-
 static float CalculateOverlap(float xmin0, float ymin0, float xmax0, float ymax0, float xmin1, float ymin1, float xmax1,
                               float ymax1)
 {
@@ -199,7 +192,7 @@ static float deqnt_affine_to_f32(int8_t qnt, int32_t zp, float scale) { return (
 
 static int process(int8_t *input, int *anchor, int grid_h, int grid_w, int height, int width, int stride,
                    std::vector<float> &boxes, std::vector<float> &objProbs, std::vector<int> &classId, float threshold,
-                   int32_t zp, float scale)
+                   int32_t zp, float scale, int numClasses)
 {
   int validCount = 0;
   int grid_len = grid_h * grid_w;
@@ -228,7 +221,7 @@ static int process(int8_t *input, int *anchor, int grid_h, int grid_w, int heigh
 
           int8_t maxClassProbs = in_ptr[5 * grid_len];
           int maxClassId = 0;
-          for (int k = 1; k < OBJ_CLASS_NUM; ++k)
+          for (int k = 1; k < numClasses; ++k)
           {
             int8_t prob = in_ptr[(5 + k) * grid_len];
             if (prob > maxClassProbs)
@@ -256,7 +249,7 @@ static int process(int8_t *input, int *anchor, int grid_h, int grid_w, int heigh
 
 int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h, int model_in_w, float conf_threshold,
                  float nms_threshold, BOX_RECT pads, float scale_w, float scale_h, std::vector<int32_t> &qnt_zps,
-                 std::vector<float> &qnt_scales, detect_result_group_t *group)
+                 std::vector<float> &qnt_scales, detect_result_group_t *group, int numClasses)
 {
   memset(group, 0, sizeof(detect_result_group_t));
 
@@ -270,7 +263,7 @@ int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h,
   int grid_w0 = model_in_w / stride0;
   int validCount0 = 0;
   validCount0 = process(input0, (int *)anchor0, grid_h0, grid_w0, model_in_h, model_in_w, stride0, filterBoxes, objProbs,
-                        classId, conf_threshold, qnt_zps[0], qnt_scales[0]);
+                        classId, conf_threshold, qnt_zps[0], qnt_scales[0], numClasses);
 
   // stride 16
   int stride1 = 16;
@@ -278,7 +271,7 @@ int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h,
   int grid_w1 = model_in_w / stride1;
   int validCount1 = 0;
   validCount1 = process(input1, (int *)anchor1, grid_h1, grid_w1, model_in_h, model_in_w, stride1, filterBoxes, objProbs,
-                        classId, conf_threshold, qnt_zps[1], qnt_scales[1]);
+                        classId, conf_threshold, qnt_zps[1], qnt_scales[1], numClasses);
 
   // stride 32
   int stride2 = 32;
@@ -286,7 +279,7 @@ int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h,
   int grid_w2 = model_in_w / stride2;
   int validCount2 = 0;
   validCount2 = process(input2, (int *)anchor2, grid_h2, grid_w2, model_in_h, model_in_w, stride2, filterBoxes, objProbs,
-                        classId, conf_threshold, qnt_zps[2], qnt_scales[2]);
+                        classId, conf_threshold, qnt_zps[2], qnt_scales[2], numClasses);
 
   int validCount = validCount0 + validCount1 + validCount2;
   // no object detect

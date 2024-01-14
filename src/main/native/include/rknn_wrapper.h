@@ -13,16 +13,17 @@ class RknnWrapper
 {
 private:
     rkYolov5s yolo;
+    int m_numClasses;
 
 public:
-    RknnWrapper(const char *model_name) : yolo(model_name) 
+    RknnWrapper(const char *model_name, int numClasses) : yolo(model_name, numClasses)
     { 
         yolo.init(yolo.get_pctx(), false);
     }
 
-    detect_result_group_t forward(cv::Mat &img) {
+    detect_result_group_t forward(cv::Mat &img, DetectionFilterParams params) {
         detect_result_group_t ret;
-        int code = yolo.inferOnly(img, &ret);
+        int code = yolo.inferOnly(img, &ret, params);
         return ret;
     }
 

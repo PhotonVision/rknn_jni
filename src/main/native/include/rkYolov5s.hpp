@@ -18,6 +18,7 @@ private:
     std::mutex mtx;
     std::string model_path;
     unsigned char *model_data;
+    int numClasses;
 
     rknn_context ctx;
     rknn_input_output_num io_num;
@@ -28,17 +29,18 @@ private:
     int channel, width, height;
     int img_width, img_height;
 
-    float nms_threshold, box_conf_threshold;
+    // float nms_threshold, box_conf_threshold;
 
 public:
-    rkYolov5s(const std::string &model_path);
+    rkYolov5s(const std::string &model_path, int numClasses);
     int init(rknn_context *ctx_in, bool isChild);
     rknn_context *get_pctx();
-    cv::Mat infer(cv::Mat &ori_img);
+
     /**
      * Run forward inference only, returning resulting detections
     */
-    int inferOnly(cv::Mat &orig_img, detect_result_group_t *outReults);
+    int inferOnly(cv::Mat &orig_img, detect_result_group_t *outReults, DetectionFilterParams params);
+
     ~rkYolov5s();
 };
 
