@@ -13,13 +13,17 @@ int main(int argc, char **argv)
 
     cv::namedWindow("Camera FPS");
 
-    RknnWrapper wrapper (model_name);
+    RknnWrapper wrapper (model_name, 80);
 
     for (int i = 0; i < 20; i++) {
         cv::Mat img;
         img = cv::imread("src/test/resources/bus.jpg");
 
-        auto ret = wrapper.forward(img);
+        DetectionFilterParams params {
+            .nms_thresh = 0.45,
+            .box_thresh = 0.25,
+        };
+        auto ret = wrapper.forward(img, params);
 
         std::cout << "Got mat! " << img.data << std::endl;
         cv::imshow("Camera FPS", img);
