@@ -92,7 +92,7 @@ Java_org_photonvision_rknn_RknnJNI_destroy
 JNIEXPORT jobjectArray JNICALL
 Java_org_photonvision_rknn_RknnJNI_detect
   (JNIEnv *env, jclass, jlong detector_, jlong input_cvmat_ptr,
-   jdouble nms_thresh, jdouble box_thresh, jint max_detections)
+   jdouble nms_thresh, jdouble box_thresh)
 {
   RknnWrapper *yolo = reinterpret_cast<RknnWrapper *>(detector_);
   cv::Mat *input_img = reinterpret_cast<cv::Mat *>(input_cvmat_ptr);

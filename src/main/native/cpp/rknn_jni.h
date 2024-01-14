@@ -50,7 +50,7 @@ JNIEXPORT void JNICALL Java_org_photonvision_rknn_RknnJNI_destroy(JNIEnv *,
  * Signature: (JJIIF)[Lorg/photonvision/rknn/RknnJNI/RknnResult;
  */
 JNIEXPORT jobjectArray JNICALL Java_org_photonvision_rknn_RknnJNI_detect(
-    JNIEnv *, jclass, jlong, jlong, jdouble, jdouble, jint);
+    JNIEnv *, jclass, jlong, jlong, jdouble, jdouble);
 
 #ifdef __cplusplus
 } // extern "C"

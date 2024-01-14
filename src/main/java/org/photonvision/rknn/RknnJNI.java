@@ -89,6 +89,6 @@ public class RknnJNI {
      * @param maxDetections
      */
     public static native RknnResult[] detect(
-        long detectorPtr, long imagePtr, double nmsThresh, double boxThresh, int maxDetections
+        long detectorPtr, long imagePtr, double nmsThresh, double boxThresh
     );
 }
