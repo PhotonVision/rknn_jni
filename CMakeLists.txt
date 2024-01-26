@@ -77,6 +77,7 @@ add_library(${PROJECT_NAME}
     src/main/native/cpp/postprocess.cc
 )
 
+
 target_link_libraries(${PROJECT_NAME} 
     Threads::Threads
     ${RKNN_RT_LIB}
@@ -108,3 +109,29 @@ target_include_directories(main_test PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include
     ${OPENCV_INCLUDE_PATH}
 )
+
+add_executable(yolov8_test
+    src/main/native/cpp/yolov8/yolov8.cc
+    src/main/native/cpp/yolov8/postprocess.cc
+    src/main/native/cpp/yolov8/main.cc
+    src/main/native/cpp/yolov8/image_drawing.c
+    src/main/native/cpp/yolov8/image_utils.c
+    src/main/native/cpp/yolov8/file_utils.c
+)
+target_include_directories(yolov8_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${LIBRKNNRT_INCLUDES}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include/3rdparty/rga/RK3588/include
+    ${JNI_INCLUDE_DIRS}
+    ${OPENCV_INCLUDE_PATH}
+
+)
+target_link_libraries(yolov8_test
+    Threads::Threads
+    ${RKNN_RT_LIB}
+    ${OPENCV_LIB_PATH}
+    ${RGA_LIB}
+    /home/coolpi/rknn_jni/src/main/native/cpp/yolov8/libturbojpeg.a
+    )
+

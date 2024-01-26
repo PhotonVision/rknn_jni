@@ -13,7 +13,8 @@
         "tuple": "cpp",
         "utility": "cpp",
         "typeindex": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "thread": "cpp"
     },
     "java.configuration.updateBuildConfiguration": "automatic"
 }
