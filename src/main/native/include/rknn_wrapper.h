@@ -16,7 +16,7 @@ private:
     int m_numClasses;
 
 public:
-    RknnWrapper(const char *model_name, int numClasses) : yolo(model_name, numClasses)
+    RknnWrapper(const char *model_name, int numClasses, int model_ver) : yolo(model_name, numClasses)
     { 
         yolo.init(yolo.get_pctx(), false);
     }

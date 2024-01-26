@@ -77,7 +77,7 @@ public class RknnJNI {
      * @param numClasses How many classes. MUST MATCH or native code segfaults
      * @return
      */
-    public static native long create(String modelPath, int numClasses);
+    public static native long create(String modelPath, int numClasses, int model_ver);
     public static native long destroy(long ptr);
 
     /**
