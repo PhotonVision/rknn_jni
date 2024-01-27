@@ -83,7 +83,7 @@ public class RknnJNI {
      * @param modelVer Which model is being used. Detections will be incorrect if not set to corrresponding model.
      * @return
      */
-    public static native long create(String modelPath, int numClasses, ModelVersion modelVer);
+    public static native long create(String modelPath, int numClasses, int modelVer);
     public static native long destroy(long ptr);
 
     /**

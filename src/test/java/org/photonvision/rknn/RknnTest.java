@@ -80,7 +80,8 @@ public class RknnTest {
         System.load("/home/coolpi/rknn_jni/cmake_build/librknn_jni.so");
 
         System.out.println("Creating detector");
-        long ptr = RknnJNI.create("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5);
+        // my java has fallen off, theres gotta be a way for java to autocast without an explicit ordinal call???
+        long ptr = RknnJNI.create("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5.ordinal());
         
         System.out.println("Running detector");
         var ret = RknnJNI.detect(ptr, img.getNativeObjAddr(), .45, .25);
