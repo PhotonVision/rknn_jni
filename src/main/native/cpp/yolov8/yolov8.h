@@ -58,10 +58,11 @@ public:
         image_buffer_t image_buf;
         object_detect_result_list results;
 
-        //TODO: convert cv matrix to image_buffer_t
+        //TODO: change inference method to use cv mat
         int ret = inference_yolov8_model(&context, image_buf, &results);
         
         //TODO: put object_detect_result_list into detect_result_group_t
+        // we have to do this because post uses result_group
         // this syntax to deref and access struct members might be wrong ive fallen off ;-;
         result_ptr->id = -1;
         result_ptr->count = -1;

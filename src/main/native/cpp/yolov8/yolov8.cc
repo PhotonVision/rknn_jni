@@ -21,6 +21,12 @@
 #include "common.h"
 #include "file_utils.h"
 #include "image_utils.h"
+#include "include/preprocess.h"
+
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+
 
 static void dump_tensor_attr(rknn_tensor_attr *attr)
 {
@@ -155,15 +161,15 @@ int release_yolov8_model(rknn_app_context_t *app_ctx)
     return 0;
 }
 
-int inference_yolov8_model(rknn_app_context_t *app_ctx, image_buffer_t *img, object_detect_result_list *od_results)
+int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, object_detect_result_list *od_results, DetectionFilterParams params)
 {
     int ret;
     image_buffer_t dst_img;
     letterbox_t letter_box;
     rknn_input inputs[app_ctx->io_num.n_input];
     rknn_output outputs[app_ctx->io_num.n_output];
-    const float nms_threshold = NMS_THRESH;      // 默认的NMS阈值
-    const float box_conf_threshold = BOX_THRESH; // 默认的置信度阈值
+    const float nms_threshold = params.nms_thresh;
+    const float box_conf_threshold = params.box_thresh;
     int bg_color = 114;
 
     if ((!app_ctx) || !(img) || (!od_results))
@@ -171,6 +177,7 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, image_buffer_t *img, obj
         return -1;
     }
 
+    // dealt with in cv mat
     memset(od_results, 0x00, sizeof(*od_results));
     memset(&letter_box, 0, sizeof(letterbox_t));
     memset(&dst_img, 0, sizeof(image_buffer_t));
@@ -178,6 +185,7 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, image_buffer_t *img, obj
     memset(outputs, 0, sizeof(outputs));
 
     // Pre Process
+    // this is all dealt with in cv mat
     dst_img.width = app_ctx->model_width;
     dst_img.height = app_ctx->model_height;
     dst_img.format = IMAGE_FORMAT_RGB888;
@@ -190,6 +198,7 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, image_buffer_t *img, obj
     }
 
     // letterbox
+    // padded image (aka letterbox_t) also needs to be cv mat
     ret = convert_image_with_letterbox(img, &dst_img, &letter_box, bg_color);
     if (ret < 0)
     {
@@ -197,7 +206,7 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, image_buffer_t *img, obj
         return -1;
     }
 
-    // Set Input Data
+    // Set Input Data (shouldnt be necessary, just need to set buf to img.data)
     inputs[0].index = 0;
     inputs[0].type = RKNN_TENSOR_UINT8;
     inputs[0].fmt = RKNN_TENSOR_NHWC;
