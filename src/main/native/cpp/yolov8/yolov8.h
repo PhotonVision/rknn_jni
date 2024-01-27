@@ -19,6 +19,7 @@
 #include "rknn_api.h"
 #include "common.h"
 #include "postprocess.h"
+#include "include/postprocess.h"
 
 class rkYolov8s
 {
@@ -38,10 +39,11 @@ rknn_app_context_t context;
 public:
     // rkYolov5s(const std::string &model_path, int numClasses);
 
-    int init(const char* model_path) {
-        init_yolov8_model(model_path, &context)
-    }
     int init_yolov8_model(const char* model_path, rknn_app_context_t* app_ctx);
+
+    int init(const char* model_path) {
+        return init_yolov8_model(model_path, &context)
+    }
 
     // rknn_context *get_pctx();
 
@@ -49,14 +51,30 @@ public:
      * Run forward inference only, returning resulting detections
     */
     // int inferOnly(cv::Mat &orig_img, detect_result_group_t *outReults, DetectionFilterParams params);
+
     int inference_yolov8_model(rknn_app_context_t* app_ctx, image_buffer_t* img, object_detect_result_list* od_results);
+    
+    int infer(cv::Mat &img, detect_result_group_t* result_ptr, DetectionFilterParams params) {
+        image_buffer_t image_buf;
+        object_detect_result_list results;
 
-    // ~rkYolov5s();
+        //TODO: convert cv matrix to image_buffer_t
+        int ret = inference_yolov8_model(&context, image_buf, &results);
+        
+        //TODO: put object_detect_result_list into detect_result_group_t
+        // this syntax to deref and access struct members might be wrong ive fallen off ;-;
+        result_ptr->id = -1;
+        result_ptr->count = -1;
+        result_ptr->results = -1;
+        
+        return ret;
+    }
+
     int release_yolov8_model(rknn_app_context_t* app_ctx);
+
+    ~rkYolov8s() {
+        release_yolov8_model(&context);
+    }
 };
-
-
-
-
 
 #endif //_RKNN_DEMO_YOLOV8_H_

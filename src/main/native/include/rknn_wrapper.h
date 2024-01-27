@@ -10,6 +10,11 @@
 #include "yolov8/yolov8.h"
 #include <optional>
 
+enum ModelVersion {
+    YOLO_V5,
+    YOLO_V8
+};
+
 class RknnWrapper
 {
 private:
@@ -18,14 +23,14 @@ private:
     int m_numClasses;
 
 public:
-    RknnWrapper(const char *model_name, int numClasses, int model_ver)
+    RknnWrapper(const char *model_name, int numClasses, ModelVersion model_ver)
     { 
         switch (model_ver) {
-            case 5:
+            case YOLO_V5:
                 yolov5 = rkYolov5s(model_name, numClasses);
                 yolov5.init(yolov5.get_pctx(), false);
             break;
-            case 8:
+            case YOLO_V8:
                 yolov8 = rkYolov8s();
                 yolov8.init(model_name);
             break;
@@ -34,7 +39,7 @@ public:
 
     detect_result_group_t forward(cv::Mat &img, DetectionFilterParams params) {
         detect_result_group_t ret;
-        int code = yolo.inferOnly(img, &ret, params);
+        int code = yolov5.inferOnly(img, &ret, params);
         return ret;
     }
 
