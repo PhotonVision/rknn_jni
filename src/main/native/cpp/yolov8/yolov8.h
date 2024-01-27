@@ -18,8 +18,12 @@
 
 #include "rknn_api.h"
 #include "common.h"
+#include "postprocess.h"
 
-typedef struct {
+class rkYolov8s
+{
+private:
+ typedef struct {
     rknn_context rknn_ctx;
     rknn_input_output_num io_num;
     rknn_tensor_attr* input_attrs;
@@ -29,14 +33,30 @@ typedef struct {
     int model_height;
     bool is_quant;
 } rknn_app_context_t;
+rknn_app_context_t context;
 
-#include "postprocess.h"
+public:
+    // rkYolov5s(const std::string &model_path, int numClasses);
+
+    int init(const char* model_path) {
+        init_yolov8_model(model_path, &context)
+    }
+    int init_yolov8_model(const char* model_path, rknn_app_context_t* app_ctx);
+
+    // rknn_context *get_pctx();
+
+    /**
+     * Run forward inference only, returning resulting detections
+    */
+    // int inferOnly(cv::Mat &orig_img, detect_result_group_t *outReults, DetectionFilterParams params);
+    int inference_yolov8_model(rknn_app_context_t* app_ctx, image_buffer_t* img, object_detect_result_list* od_results);
+
+    // ~rkYolov5s();
+    int release_yolov8_model(rknn_app_context_t* app_ctx);
+};
 
 
-int init_yolov8_model(const char* model_path, rknn_app_context_t* app_ctx);
 
-int release_yolov8_model(rknn_app_context_t* app_ctx);
 
-int inference_yolov8_model(rknn_app_context_t* app_ctx, image_buffer_t* img, object_detect_result_list* od_results);
 
 #endif //_RKNN_DEMO_YOLOV8_H_
