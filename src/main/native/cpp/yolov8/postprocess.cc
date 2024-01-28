@@ -351,7 +351,7 @@ static int process_fp32(float *box_tensor, float *score_tensor, float *score_sum
 }
 
 
-int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, letterbox_t *letter_box, float conf_threshold, float nms_threshold, object_detect_result_list *od_results)
+int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, BOX_RECT *padding, float conf_threshold, float nms_threshold, object_detect_result_list *od_results)
 {
     std::vector<float> filterBoxes;
     std::vector<float> objProbs;
@@ -425,6 +425,10 @@ int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, letterbox_t 
     int last_count = 0;
     od_results->count = 0;
 
+    int width = padding->right - padding->left;
+    int height = padding->bottom - padding->top;
+    float rect_scale = static_cast<float>(width) / static_cast<float>(height);
+
     /* box valid detect target */
     for (int i = 0; i < validCount; ++i)
     {
@@ -434,17 +438,19 @@ int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, letterbox_t 
         }
         int n = indexArray[i];
 
-        float x1 = filterBoxes[n * 4 + 0] - letter_box->x_pad;
-        float y1 = filterBoxes[n * 4 + 1] - letter_box->y_pad;
+        // if we run letterboxing, it gives us a BOX_RECT struct representing the box
+        // so we can get our offset by using the top left (0,0) by opencv coord frame
+        float x1 = filterBoxes[n * 4 + 0] - padding->left;
+        float y1 = filterBoxes[n * 4 + 1] - padding->top;
         float x2 = x1 + filterBoxes[n * 4 + 2];
         float y2 = y1 + filterBoxes[n * 4 + 3];
         int id = classId[n];
         float obj_conf = objProbs[i];
 
-        od_results->results[last_count].box.left = (int)(clamp(x1, 0, model_in_w) / letter_box->scale);
-        od_results->results[last_count].box.top = (int)(clamp(y1, 0, model_in_h) / letter_box->scale);
-        od_results->results[last_count].box.right = (int)(clamp(x2, 0, model_in_w) / letter_box->scale);
-        od_results->results[last_count].box.bottom = (int)(clamp(y2, 0, model_in_h) / letter_box->scale);
+        od_results->results[last_count].box.left = (int)(clamp(x1, 0, model_in_w) / rect_scale);
+        od_results->results[last_count].box.top = (int)(clamp(y1, 0, model_in_h) / rect_scale);
+        od_results->results[last_count].box.right = (int)(clamp(x2, 0, model_in_w) / rect_scale);
+        od_results->results[last_count].box.bottom = (int)(clamp(y2, 0, model_in_h) / rect_scale);
         od_results->results[last_count].prop = obj_conf;
         od_results->results[last_count].cls_id = id;
         last_count++;

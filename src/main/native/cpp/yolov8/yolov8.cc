@@ -165,8 +165,9 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, objec
 {
     int ret;
     cv::Mat img;
-    // what do we do with this?
-    letterbox_t letter_box;
+    BOX_RECT padding;
+    memset(&padding, 0, sizeof(BOX_RECT));
+
     rknn_input inputs[app_ctx->io_num.n_input];
     rknn_output outputs[app_ctx->io_num.n_output];
     const float nms_threshold = params.nms_thresh;
@@ -187,9 +188,6 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, objec
     // get current width/height
     img_width = img.cols;
     img_height = img.rows;
-
-    BOX_RECT padding;
-    memset(&padding, 0, sizeof(BOX_RECT));
 
     cv::Size target_size(width, height);
     // create 8 bit 3 channel buffer
@@ -218,7 +216,7 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, objec
         float min_scale = std::min(scale_w, scale_h);
         scale_w = min_scale;
         scale_h = min_scale;
-        letterbox(img, resized_img, pads, min_scale, target_size);
+        letterbox(img, resized_img, padding, min_scale, target_size);
         *********/
         inputs[0].buf = resized_img.data;
     }
@@ -262,8 +260,7 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, objec
     }
 
     // Post Process
-    // TODO: look into why this needs the letterbox_t struct
-    post_process(app_ctx, outputs, &letter_box, box_conf_threshold, nms_threshold, od_results);
+    post_process(app_ctx, outputs, &padding, box_conf_threshold, nms_threshold, od_results);
 
     // release rknn output
     rknn_outputs_release(app_ctx->rknn_ctx, app_ctx->io_num.n_output, outputs);
