@@ -1,9 +1,8 @@
 #pragma once
 
-#include "postprocess_v5.h"
+#include "yolov5/postprocess_v5.h"
 #include "opencv2/core/core.hpp"
 #include "rknn_api.h"
-#include "image_utils.h"
 #include <vector>
 
 typedef struct {
@@ -29,7 +28,7 @@ protected:
         DetectionFilterParams params, 
         cv::Size inputImageSize,
         cv::Size2d inputImageScale,
-        letterbox_t letterbox
+        BOX_RECT letterbox
     ) = 0;
 
     int numClasses;
@@ -59,7 +58,7 @@ protected:
         DetectionFilterParams params, 
         cv::Size inputImageSize,
         cv::Size2d inputImageScale,
-        letterbox_t letterbox
+        BOX_RECT letterbox
     );
 };
 
@@ -73,7 +72,7 @@ protected:
         DetectionFilterParams params, 
         cv::Size inputImageSize,
         cv::Size2d inputImageScale,
-        letterbox_t letterbox
+        BOX_RECT letterbox
     );
 };
 

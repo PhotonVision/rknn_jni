@@ -19,7 +19,7 @@
 
 #include <cstdio>
 
-#include "models/yolo_common.hpp"
+#include "yolo_common.hpp"
 #include "wpi_jni_common.h"
 
 static JClass detectionResultClass;

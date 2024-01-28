@@ -1,4 +1,4 @@
-#include "models/yolo_common.hpp"
+#include "yolo_common.hpp"
 #include <iostream>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>

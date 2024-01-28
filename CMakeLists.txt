@@ -26,11 +26,11 @@ endif()
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--allow-shlib-undefined")
 
 # rknn api
-set(RKNN_RT_LIB ${CMAKE_SOURCE_DIR}/src/main/native/include/librknnrt.so)
+set(RKNN_RT_LIB ${CMAKE_SOURCE_DIR}/src/main/native/lib/librknnrt.so)
 
 #rga
 set(LIB_ARCH aarch64)
-set(RGA_PATH ${CMAKE_SOURCE_DIR}/src/main/native/include/3rdparty/rga/RK3588)
+set(RGA_PATH ${CMAKE_SOURCE_DIR}/src/main/native/lib/3rdparty/rga/RK3588)
 set(RGA_LIB ${RGA_PATH}/lib/Linux/${LIB_ARCH}/librga.so)
 
 

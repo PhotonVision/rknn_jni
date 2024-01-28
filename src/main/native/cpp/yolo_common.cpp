@@ -1,4 +1,4 @@
-#include "models/yolo_common.hpp"
+#include "yolo_common.hpp"
 
 #include <opencv2/imgproc.hpp>
 #include "im2d.h"
@@ -253,8 +253,9 @@ detect_result_group_t YoloModel::forward(cv::Mat &orig_img, DetectionFilterParam
         // todo barf
     }
 
+    // todo box-rect things
     auto detections = this->postProcess(
-        outputs, params, orig_img.size(), {scale_w, scale_h}, letterbox_t{}
+        outputs, params, orig_img.size(), {scale_w, scale_h}, BOX_RECT{}
     );
 
     ret = rknn_outputs_release(ctx, io_num.n_output, outputs.data());
@@ -269,7 +270,7 @@ detect_result_group_t YoloV5Model::postProcess(std::vector<rknn_output> outputs,
         DetectionFilterParams params, 
         cv::Size inputImageSize,
         cv::Size2d imageScale,
-        letterbox_t letterbox
+        BOX_RECT letterbox
     ) {
     detect_result_group_t result;
 
@@ -298,7 +299,7 @@ detect_result_group_t YoloV8Model::postProcess(std::vector<rknn_output> outputs,
         DetectionFilterParams params, 
         cv::Size inputImageSize,
         cv::Size2d imageScale,
-        letterbox_t letterbox) {
+        BOX_RECT letterbox) {
     detect_result_group_t result;
 
     BOX_RECT padding {

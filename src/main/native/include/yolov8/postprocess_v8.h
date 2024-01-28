@@ -5,9 +5,8 @@
 #include <vector>
 #include "rknn_api.h"
 #include "common.h"
-#include "image_utils.h"
 #include <opencv2/core/types.hpp>
-#include "postprocess_v5.h"
+#include "yolov5/postprocess_v5.h"
 
 #define OBJ_NAME_MAX_SIZE_V8 64
 #define OBJ_NUMB_MAX_SIZE_V8 128
