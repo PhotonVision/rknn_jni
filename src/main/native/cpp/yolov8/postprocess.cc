@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "yolov8.h"
+#include "yolov8/yolov8.h"
 
 #include <math.h>
 #include <stdint.h>

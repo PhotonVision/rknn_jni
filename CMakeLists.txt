@@ -72,9 +72,7 @@ find_package(Threads REQUIRED)
 
 add_library(${PROJECT_NAME}
     src/main/native/cpp/rknn_jni.cpp
-    src/main/native/cpp/rkYolov5s.cc
-    src/main/native/cpp/preprocess.cc
-    src/main/native/cpp/postprocess.cc
+    src/main/native/cpp/yolo_common.cpp
 )
 
 
@@ -89,6 +87,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${LIBRKNNRT_INCLUDES}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include/model_zoo
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include/3rdparty/rga/RK3588/include
     ${JNI_INCLUDE_DIRS}
     ${OPENCV_INCLUDE_PATH}

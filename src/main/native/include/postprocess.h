@@ -33,10 +33,6 @@ typedef struct _detect_result_group_t
     detect_result_t results[OBJ_NUMB_MAX_SIZE];
 } detect_result_group_t;
 
-typedef struct {
-    double nms_thresh;
-    double box_thresh;
-} DetectionFilterParams ;
 
 int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h, int model_in_w,
                  float conf_threshold, float nms_threshold, BOX_RECT pads, float scale_w, float scale_h,

@@ -19,9 +19,7 @@
 
 #include <cstdio>
 
-#include "postprocess.h"
-#include "rkYolov5s.hpp"
-#include "rknn_wrapper.h"
+#include "models/yolo_common.hpp"
 #include "wpi_jni_common.h"
 
 static JClass detectionResultClass;
@@ -67,7 +65,10 @@ Java_org_photonvision_rknn_RknnJNI_create
   const char *nativeString = env->GetStringUTFChars(javaString, 0);
   std::printf("Creating for %s\n", nativeString);
 
-  auto ret = new RknnWrapper(nativeString, numClasses, reinterpret_cast<ModelVersion>(modelVer));
+  // todo matt pass from java or increment in native. number is 0,1,or 2
+  int CORE_NUM = 0;  
+
+  auto ret = new YoloV5Model(nativeString, numClasses, static_cast<ModelVersion>(modelVer), CORE_NUM);
   env->ReleaseStringUTFChars(javaString, nativeString);
   return reinterpret_cast<jlong>(ret);
 }
@@ -81,7 +82,7 @@ JNIEXPORT void JNICALL
 Java_org_photonvision_rknn_RknnJNI_destroy
   (JNIEnv *env, jclass, jlong ptr)
 {
-  delete reinterpret_cast<RknnWrapper *>(ptr);
+  delete reinterpret_cast<YoloModel *>(ptr);
 }
 
 /*
@@ -94,7 +95,7 @@ Java_org_photonvision_rknn_RknnJNI_detect
   (JNIEnv *env, jclass, jlong detector_, jlong input_cvmat_ptr,
    jdouble nms_thresh, jdouble box_thresh)
 {
-  RknnWrapper *yolo = reinterpret_cast<RknnWrapper *>(detector_);
+  YoloModel *yolo = reinterpret_cast<YoloModel *>(detector_);
   cv::Mat *input_img = reinterpret_cast<cv::Mat *>(input_cvmat_ptr);
 
   DetectionFilterParams params{

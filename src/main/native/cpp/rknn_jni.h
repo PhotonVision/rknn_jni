@@ -33,7 +33,7 @@ extern "C" {
 JNIEXPORT jlong JNICALL Java_org_photonvision_rknn_RknnJNI_create(JNIEnv *,
                                                                   jclass,
                                                                   jstring,
-                                                                  jint);
+                                                                  jint, jint);
 
 /*
  * Class:     org_photonvision_rknn_RknnJNI

@@ -17,11 +17,11 @@
 #include <string.h>
 #include <math.h>
 
-#include "yolov8.h"
-#include "common.h"
+#include "yolov8/yolov8.h"
+#include "yolov8/common.h"
 #include "file_utils.h"
 #include "image_utils.h"
-#include "include/preprocess.h"
+#include "preprocess.h"
 
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -37,7 +37,7 @@ static void dump_tensor_attr(rknn_tensor_attr *attr)
            get_qnt_type_string(attr->qnt_type), attr->zp, attr->scale);
 }
 
-int init_yolov8_model(const char *model_path, rknn_app_context_t *app_ctx)
+int rkYolov8s::init_yolov8_model(const char *model_path, rkYolov8s::rknn_app_context_t *app_ctx)
 {
     int ret;
     int model_len = 0;
@@ -141,7 +141,7 @@ int init_yolov8_model(const char *model_path, rknn_app_context_t *app_ctx)
     return 0;
 }
 
-int release_yolov8_model(rknn_app_context_t *app_ctx)
+int rkYolov8s::release_yolov8_model(rkYolov8s::rknn_app_context_t *app_ctx)
 {
     if (app_ctx->rknn_ctx != 0)
     {
@@ -161,7 +161,7 @@ int release_yolov8_model(rknn_app_context_t *app_ctx)
     return 0;
 }
 
-int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, detect_result_group_t *od_results, DetectionFilterParams params)
+int rkYolov8s::inference_yolov8_model(rkYolov8s::rknn_app_context_t *app_ctx, cv::Mat &orig_img, detect_result_group_t *od_results, DetectionFilterParams params)
 {
     int ret;
     cv::Mat img;
@@ -174,28 +174,25 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, detec
     const float box_conf_threshold = params.box_thresh;
     int bg_color = 114;
 
-    if ((!app_ctx) || !(orig_img) || (!od_results))
+    if ((!app_ctx) || (!od_results))
     {
         return -1;
     }
 
-    // get model desired width/height
-    width = app_ctx->model_width;
-    height = app_ctx->model_height;
+    int img_width = img.cols;
+    int img_height = img.rows;
 
     // rknn wants RGB, cameras usually give BGR
     cv::cvtColor(orig_img, img, cv::COLOR_BGR2RGB);
-    // get current width/height
-    img_width = img.cols;
-    img_height = img.rows;
 
-    cv::Size target_size(width, height);
+    cv::Size target_size(app_ctx->model_width, app_ctx->model_height);
     // create 8 bit 3 channel buffer
     cv::Mat resized_img(target_size.height, target_size.width, CV_8UC3);
 
     // Calculate scaling ratio
     float scale_w = (float)target_size.width / img.cols;
     float scale_h = (float)target_size.height / img.rows;
+
 
     // if input doesn't match model desired
     if (img_width != width || img_height != height)

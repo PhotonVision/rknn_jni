@@ -19,12 +19,13 @@
 #include "rknn_api.h"
 #include "common.h"
 #include "postprocess.h"
-#include "include/postprocess.h"
+#include "postprocess.h"
+
+#include "opencv2/core/core.hpp"
 
 class rkYolov8s
 {
 private:
- typedef struct {
     rknn_context rknn_ctx;
     rknn_input_output_num io_num;
     rknn_tensor_attr* input_attrs;
@@ -33,8 +34,7 @@ private:
     int model_width;
     int model_height;
     bool is_quant;
-} rknn_app_context_t;
-rknn_app_context_t context;
+
 
 public:
     // rkYolov5s(const std::string &model_path, int numClasses);
@@ -42,7 +42,7 @@ public:
     int init_yolov8_model(const char* model_path, rknn_app_context_t* app_ctx);
 
     int init(const char* model_path) {
-        return init_yolov8_model(model_path, &context)
+        return init_yolov8_model(model_path, &context);
     }
 
     // rknn_context *get_pctx();
@@ -57,7 +57,7 @@ public:
         return inference_yolov8_model(&context, orig_img, od_results, params);
     }
 
-    int release_yolov8_model(rknn_app_context_t* app_ctx);
+    int release_yolov8_model();
 
     ~rkYolov8s() {
         release_yolov8_model(&context);
