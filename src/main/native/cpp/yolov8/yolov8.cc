@@ -21,6 +21,12 @@
 #include "common.h"
 #include "file_utils.h"
 #include "image_utils.h"
+#include "include/preprocess.h"
+
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+
 
 static void dump_tensor_attr(rknn_tensor_attr *attr)
 {
@@ -155,55 +161,72 @@ int release_yolov8_model(rknn_app_context_t *app_ctx)
     return 0;
 }
 
-int inference_yolov8_model(rknn_app_context_t *app_ctx, image_buffer_t *img, object_detect_result_list *od_results)
+int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, detect_result_group_t *od_results, DetectionFilterParams params)
 {
     int ret;
-    image_buffer_t dst_img;
-    letterbox_t letter_box;
+    cv::Mat img;
+    BOX_RECT padding;
+    memset(&padding, 0, sizeof(BOX_RECT));
+
     rknn_input inputs[app_ctx->io_num.n_input];
     rknn_output outputs[app_ctx->io_num.n_output];
-    const float nms_threshold = NMS_THRESH;      // 默认的NMS阈值
-    const float box_conf_threshold = BOX_THRESH; // 默认的置信度阈值
+    const float nms_threshold = params.nms_thresh;
+    const float box_conf_threshold = params.box_thresh;
     int bg_color = 114;
 
-    if ((!app_ctx) || !(img) || (!od_results))
+    if ((!app_ctx) || !(orig_img) || (!od_results))
     {
         return -1;
     }
 
-    memset(od_results, 0x00, sizeof(*od_results));
-    memset(&letter_box, 0, sizeof(letterbox_t));
-    memset(&dst_img, 0, sizeof(image_buffer_t));
-    memset(inputs, 0, sizeof(inputs));
-    memset(outputs, 0, sizeof(outputs));
+    // get model desired width/height
+    width = app_ctx->model_width;
+    height = app_ctx->model_height;
 
-    // Pre Process
-    dst_img.width = app_ctx->model_width;
-    dst_img.height = app_ctx->model_height;
-    dst_img.format = IMAGE_FORMAT_RGB888;
-    dst_img.size = get_image_size(&dst_img);
-    dst_img.virt_addr = (unsigned char *)malloc(dst_img.size);
-    if (dst_img.virt_addr == NULL)
+    // rknn wants RGB, cameras usually give BGR
+    cv::cvtColor(orig_img, img, cv::COLOR_BGR2RGB);
+    // get current width/height
+    img_width = img.cols;
+    img_height = img.rows;
+
+    cv::Size target_size(width, height);
+    // create 8 bit 3 channel buffer
+    cv::Mat resized_img(target_size.height, target_size.width, CV_8UC3);
+
+    // Calculate scaling ratio
+    float scale_w = (float)target_size.width / img.cols;
+    float scale_h = (float)target_size.height / img.rows;
+
+    // if input doesn't match model desired
+    if (img_width != width || img_height != height)
     {
-        printf("malloc buffer size:%d fail!\n", dst_img.size);
-        return -1;
+        // rga
+        rga_buffer_t src;
+        rga_buffer_t dst;
+        memset(&src, 0, sizeof(src));
+        memset(&dst, 0, sizeof(dst));
+        ret = resize_rga(src, dst, img, resized_img, target_size);
+        if (ret != 0)
+        {
+            fprintf(stderr, "resize with rga error\n");
+        }
+        /*********
+        // opencv
+        // ripped from v5, why do we not letterbox???
+        float min_scale = std::min(scale_w, scale_h);
+        scale_w = min_scale;
+        scale_h = min_scale;
+        letterbox(img, resized_img, padding, min_scale, target_size);
+        *********/
+        inputs[0].buf = resized_img.data;
+    }
+    else
+    {
+        // otherwise just send the image as is
+        inputs[0].buf = img.data;
     }
 
-    // letterbox
-    ret = convert_image_with_letterbox(img, &dst_img, &letter_box, bg_color);
-    if (ret < 0)
-    {
-        printf("convert_image_with_letterbox fail! ret=%d\n", ret);
-        return -1;
-    }
-
-    // Set Input Data
-    inputs[0].index = 0;
-    inputs[0].type = RKNN_TENSOR_UINT8;
-    inputs[0].fmt = RKNN_TENSOR_NHWC;
-    inputs[0].size = app_ctx->model_width * app_ctx->model_height * app_ctx->model_channel;
-    inputs[0].buf = dst_img.virt_addr;
-
+    // load our image into npu
     ret = rknn_inputs_set(app_ctx->rknn_ctx, app_ctx->io_num.n_input, inputs);
     if (ret < 0)
     {
@@ -211,7 +234,7 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, image_buffer_t *img, obj
         return -1;
     }
 
-    // Run
+    // send it
     printf("rknn_run\n");
     ret = rknn_run(app_ctx->rknn_ctx, nullptr);
     if (ret < 0)
@@ -220,13 +243,15 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, image_buffer_t *img, obj
         return -1;
     }
 
-    // Get Output
+    // prep output storage
     memset(outputs, 0, sizeof(outputs));
     for (int i = 0; i < app_ctx->io_num.n_output; i++)
     {
         outputs[i].index = i;
         outputs[i].want_float = (!app_ctx->is_quant);
     }
+
+    // read outputs from npu
     ret = rknn_outputs_get(app_ctx->rknn_ctx, app_ctx->io_num.n_output, outputs, NULL);
     if (ret < 0)
     {
@@ -235,9 +260,9 @@ int inference_yolov8_model(rknn_app_context_t *app_ctx, image_buffer_t *img, obj
     }
 
     // Post Process
-    post_process(app_ctx, outputs, &letter_box, box_conf_threshold, nms_threshold, od_results);
+    post_process(app_ctx, outputs, &padding, box_conf_threshold, nms_threshold, od_results);
 
-    // Remeber to release rknn output
+    // release rknn output
     rknn_outputs_release(app_ctx->rknn_ctx, app_ctx->io_num.n_output, outputs);
 
 out:

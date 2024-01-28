@@ -62,12 +62,12 @@ static jobject MakeJObject(JNIEnv *env, const detect_result_t &result) {
  */
 JNIEXPORT jlong JNICALL
 Java_org_photonvision_rknn_RknnJNI_create
-  (JNIEnv *env, jclass, jstring javaString, jint numClasses)
+  (JNIEnv *env, jclass, jstring javaString, jint numClasses, jint modelVer)
 {
   const char *nativeString = env->GetStringUTFChars(javaString, 0);
   std::printf("Creating for %s\n", nativeString);
 
-  auto ret = new RknnWrapper(nativeString, numClasses);
+  auto ret = new RknnWrapper(nativeString, numClasses, reinterpret_cast<ModelVersion>(modelVer));
   env->ReleaseStringUTFChars(javaString, nativeString);
   return reinterpret_cast<jlong>(ret);
 }
