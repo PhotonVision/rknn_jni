@@ -23,6 +23,7 @@
 
 #include <set>
 #include <vector>
+#include "include/postprocess.h"
 #define LABEL_NALE_TXT_PATH "./model/coco_80_labels_list.txt"
 
 static char *labels[OBJ_CLASS_NUM];
@@ -351,7 +352,7 @@ static int process_fp32(float *box_tensor, float *score_tensor, float *score_sum
 }
 
 
-int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, BOX_RECT *padding, float conf_threshold, float nms_threshold, object_detect_result_list *od_results)
+int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, BOX_RECT *padding, float conf_threshold, float nms_threshold, detect_result_group_t *od_results)
 {
     std::vector<float> filterBoxes;
     std::vector<float> objProbs;
@@ -363,7 +364,7 @@ int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, BOX_RECT *pa
     int model_in_w = app_ctx->model_width;
     int model_in_h = app_ctx->model_height;
 
-    memset(od_results, 0, sizeof(object_detect_result_list));
+    memset(od_results, 0, sizeof(detect_result_group_t));
 
     // default 3 branch
     int dfl_len = app_ctx->output_attrs[0].dims[1] /4;
@@ -451,8 +452,8 @@ int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, BOX_RECT *pa
         od_results->results[last_count].box.top = (int)(clamp(y1, 0, model_in_h) / rect_scale);
         od_results->results[last_count].box.right = (int)(clamp(x2, 0, model_in_w) / rect_scale);
         od_results->results[last_count].box.bottom = (int)(clamp(y2, 0, model_in_h) / rect_scale);
-        od_results->results[last_count].prop = obj_conf;
-        od_results->results[last_count].cls_id = id;
+        od_results->results[last_count].obj_conf = obj_conf;
+        od_results->results[last_count].id = id;
         last_count++;
     }
     od_results->count = last_count;

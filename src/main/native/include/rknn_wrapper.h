@@ -39,10 +39,19 @@ public:
 
     detect_result_group_t forward(cv::Mat &img, DetectionFilterParams params) {
         detect_result_group_t ret;
-        int code = yolov5.inferOnly(img, &ret, params);
+        int code;
+        switch (model_ver) {
+            case YOLO_V5:
+                code = yolov5.inferOnly(img, &ret, params);
+            break;
+            case YOLO_V8:
+                code = yolov8.infer(img, &ret, params);
+            break;
+        }
         return ret;
     }
 
     // Let the rkYolov5s dtor take care of cleanup
+    // how to destroy yolov8 processor?????
     ~RknnWrapper() = default;
 };

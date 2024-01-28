@@ -161,7 +161,7 @@ int release_yolov8_model(rknn_app_context_t *app_ctx)
     return 0;
 }
 
-int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, object_detect_result_list *od_results, DetectionFilterParams params)
+int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, detect_result_group_t *od_results, DetectionFilterParams params)
 {
     int ret;
     cv::Mat img;

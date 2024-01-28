@@ -52,23 +52,9 @@ public:
     */
     // int inferOnly(cv::Mat &orig_img, detect_result_group_t *outReults, DetectionFilterParams params);
 
-    int inference_yolov8_model(rknn_app_context_t* app_ctx, image_buffer_t* img, object_detect_result_list* od_results);
-    
-    int infer(cv::Mat &img, detect_result_group_t* result_ptr, DetectionFilterParams params) {
-        image_buffer_t image_buf;
-        object_detect_result_list results;
-
-        //TODO: change inference method to use cv mat
-        int ret = inference_yolov8_model(&context, image_buf, &results);
-        
-        //TODO: put object_detect_result_list into detect_result_group_t
-        // we have to do this because post uses result_group
-        // this syntax to deref and access struct members might be wrong ive fallen off ;-;
-        result_ptr->id = -1;
-        result_ptr->count = -1;
-        result_ptr->results = -1;
-        
-        return ret;
+    int inference_yolov8_model(rknn_app_context_t *app_ctx, cv::Mat &orig_img, detect_result_group_t *od_results, DetectionFilterParams params);
+    int infer(cv::Mat &orig_img, detect_result_group_t *od_results, DetectionFilterParams params) {
+        return inference_yolov8_model(&context, orig_img, od_results, params);
     }
 
     int release_yolov8_model(rknn_app_context_t* app_ctx);
