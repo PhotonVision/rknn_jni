@@ -21,6 +21,11 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect2d;
 
 public class RknnJNI {
+    public static enum ModelVersion {
+        YOLO_V5,
+        YOLO_V8
+    }
+
     public static class RknnResult {
         public RknnResult(
             int left, int top, int right, int bottom, float conf, int class_id
@@ -75,9 +80,14 @@ public class RknnJNI {
      * Create a RKNN detector. Returns valid pointer on success, or NULL on error
      * @param modelPath Absolute path to the model on disk
      * @param numClasses How many classes. MUST MATCH or native code segfaults
-     * @return
+     * @param modelVer Which model is being used. Detections will be incorrect if not set to corrresponding model.
+     * @return Pointer to the detector in native memory
      */
-    public static native long create(String modelPath, int numClasses);
+    public static native long create(String modelPath, int numClasses, int modelVer, int coreNum);
+    
+    /**
+     * Delete all native resources assocated with a detector
+     */
     public static native long destroy(long ptr);
 
     /**

@@ -32,6 +32,7 @@ import org.opencv.core.Size;
 import org.opencv.dnn.Dnn;
 import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.photonvision.rknn.RknnJNI.ModelVersion;
 
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
@@ -39,27 +40,8 @@ import edu.wpi.first.util.CombinedRuntimeLoader;
 
 public class RknnTest {
     
-    private static List<String> getOutputNames(Net net) {
-        if (net == null) {
-            // barf?
-            return List.of();
-        }
-
-        List<String> names = new ArrayList<>();
-
-        List<Integer> outLayers = net.getUnconnectedOutLayers().toList();
-        List<String> layersNames = net.getLayerNames();
-
-        outLayers.forEach(
-                (item) -> names.add(layersNames.get(item - 1))); // unfold and create R-CNN layers from the
-        // loaded YOLO model//
-        return names;
-    }
-
     @Test
     public void testBasicBlobs() {
-        // I really really hate this. Someone should fix this for me
-        // var s = new CvSink("guh");
 
         try {
             CombinedRuntimeLoader.loadLibraries(RknnTest.class, Core.NATIVE_LIBRARY_NAME);
@@ -73,13 +55,13 @@ public class RknnTest {
 
          
         System.out.println("Loading bus");
-        Mat img = Imgcodecs.imread("src/test/resources/bus.jpg");
+        Mat img = Imgcodecs.imread("silly_notes2.png");
 
         System.out.println("Loading rknn-jni");
-        System.load("/home/mdurrani808/photon-testing/rknn_jni/cmake_build/librknn_jni.so");
+        System.load("/home/coolpi/rknn_jni/cmake_build/librknn_jni.so");
 
         System.out.println("Creating detector");
-        long ptr = RknnJNI.create("/home/mdurrani808/photon-testing/rknn_jni/src/test/resources/RK3588/yolov5s-640-640.rknn", 80);
+        long ptr = RknnJNI.create("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5.ordinal(), 0);
         
         System.out.println("Running detector");
         var ret = RknnJNI.detect(ptr, img.getNativeObjAddr(), .45, .25);

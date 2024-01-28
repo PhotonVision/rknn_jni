@@ -26,11 +26,11 @@ endif()
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--allow-shlib-undefined")
 
 # rknn api
-set(RKNN_RT_LIB ${CMAKE_SOURCE_DIR}/src/main/native/include/librknnrt.so)
+set(RKNN_RT_LIB ${CMAKE_SOURCE_DIR}/src/main/native/lib/librknnrt.so)
 
 #rga
 set(LIB_ARCH aarch64)
-set(RGA_PATH ${CMAKE_SOURCE_DIR}/src/main/native/include/3rdparty/rga/RK3588)
+set(RGA_PATH ${CMAKE_SOURCE_DIR}/src/main/native/lib/3rdparty/rga/RK3588)
 set(RGA_LIB ${RGA_PATH}/lib/Linux/${LIB_ARCH}/librga.so)
 
 
@@ -72,12 +72,14 @@ find_package(Threads REQUIRED)
 
 add_library(${PROJECT_NAME}
     src/main/native/cpp/rknn_jni.cpp
-    src/main/native/cpp/rkYolov5s.cc
+    src/main/native/cpp/yolo_common.cpp
     src/main/native/cpp/preprocess.cc
-    src/main/native/cpp/postprocess.cc
+    src/main/native/cpp/postprocess_v5.cc
+    src/main/native/cpp/postprocess_v8.cc
 )
 
-target_link_libraries(${PROJECT_NAME} 
+
+target_link_libraries(${PROJECT_NAME} PUBLIC
     Threads::Threads
     ${RKNN_RT_LIB}
     ${OPENCV_LIB_PATH}
@@ -88,6 +90,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${LIBRKNNRT_INCLUDES}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include/model_zoo
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include/3rdparty/rga/RK3588/include
     ${JNI_INCLUDE_DIRS}
     ${OPENCV_INCLUDE_PATH}
@@ -102,9 +105,12 @@ include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME})
 install(FILES ${RKNN_RT_LIB} ${RGA_LIB} TYPE LIB)
 
+message("RGA is ${RGA_LIB}")
+
 add_executable(main_test src/main/native/cpp/main_test.cc)
-target_link_libraries(main_test ${PROJECT_NAME})
+target_link_libraries(main_test ${PROJECT_NAME} ${RGA_LIB})
 target_include_directories(main_test PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include/model_zoo
     ${OPENCV_INCLUDE_PATH}
 )
