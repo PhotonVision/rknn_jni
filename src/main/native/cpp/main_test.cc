@@ -20,11 +20,11 @@ int main_test(ModelVersion version)
 
     for (int j = 0; j < 1; j++) {
         cv::Mat img;
-        img = cv::imread("silly_notes2.png");
+        img = cv::imread("robots.png");
 
         DetectionFilterParams params {
             .nms_thresh = 0.45,
-            .box_thresh = 0.25,
+            .box_thresh = 0.15,
         };
         auto ret = wrapper->forward(img, params);
 
