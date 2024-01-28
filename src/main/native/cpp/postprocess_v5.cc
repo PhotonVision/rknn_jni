@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "postprocess.h"
+#include "postprocess_v5.h"
 
 #include <math.h>
 #include <stdint.h>
@@ -247,7 +247,7 @@ static int process(int8_t *input, int *anchor, int grid_h, int grid_w, int heigh
   return validCount;
 }
 
-int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h, int model_in_w, float conf_threshold,
+int post_process_v5(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h, int model_in_w, float conf_threshold,
                  float nms_threshold, BOX_RECT pads, float scale_w, float scale_h, std::vector<int32_t> &qnt_zps,
                  std::vector<float> &qnt_scales, detect_result_group_t *group, int numClasses)
 {

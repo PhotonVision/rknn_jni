@@ -1,6 +1,6 @@
 #pragma once
 
-#include "postprocess.h"
+#include "postprocess_v5.h"
 #include "opencv2/core/core.hpp"
 #include "rknn_api.h"
 #include "image_utils.h"
@@ -32,7 +32,6 @@ protected:
         letterbox_t letterbox
     ) = 0;
 
-private:
     int numClasses;
     ModelVersion yoloType;
 

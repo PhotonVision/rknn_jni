@@ -228,6 +228,7 @@ detect_result_group_t YoloModel::forward(cv::Mat &orig_img, DetectionFilterParam
 
     for (int i = 0; i < io_num.n_output; i++)
     {
+        memset(&outputs[i], 0, sizeof(rknn_output));
         outputs[i].want_float = 0;
     }
 
@@ -239,18 +240,44 @@ detect_result_group_t YoloModel::forward(cv::Mat &orig_img, DetectionFilterParam
         // todo barf
     }
 
-    return this->postProcess(
+    auto detections = this->postProcess(
         outputs, params, orig_img.size(), {scale_w, scale_h}, letterbox_t{}
     );
+
+    ret = rknn_outputs_release(ctx, io_num.n_output, outputs.data());
+    if (ret) {
+        // todo barf
+    }
+
+    return detections;
 }
 
-detect_result_group_t YoloV5Model::postProcess(std::vector<rknn_output> output,
+detect_result_group_t YoloV5Model::postProcess(std::vector<rknn_output> outputs,
         DetectionFilterParams params, 
         cv::Size inputImageSize,
-        cv::Size2d inputImageScale,
+        cv::Size2d imageScale,
         letterbox_t letterbox
     ) {
-        return {};
+    detect_result_group_t result;
+
+    BOX_RECT pads;
+    memset(&pads, 0, sizeof(BOX_RECT));
+
+    // 后处理/Post-processing
+    std::vector<float> out_scales;
+    std::vector<int32_t> out_zps;
+    for (int i = 0; i < io_num.n_output; ++i)
+    {
+        out_scales.push_back(output_attrs[i].scale);
+        out_zps.push_back(output_attrs[i].zp);
     }
+
+    post_process_v5((int8_t *)outputs[0].buf, (int8_t *)outputs[1].buf, (int8_t *)outputs[2].buf, 
+                modelSize.width, modelSize.height,
+                params.box_thresh, params.nms_thresh, pads, 
+                imageScale.width, imageScale.height, out_zps, out_scales, &result, numClasses);
+
+    return result;
+}
 
 

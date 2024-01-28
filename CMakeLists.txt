@@ -73,6 +73,7 @@ find_package(Threads REQUIRED)
 add_library(${PROJECT_NAME}
     src/main/native/cpp/rknn_jni.cpp
     src/main/native/cpp/yolo_common.cpp
+    src/main/native/cpp/postprocess_v5.cc
 )
 
 
@@ -106,6 +107,7 @@ add_executable(main_test src/main/native/cpp/main_test.cc)
 target_link_libraries(main_test ${PROJECT_NAME})
 target_include_directories(main_test PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include/model_zoo
     ${OPENCV_INCLUDE_PATH}
 )
 
