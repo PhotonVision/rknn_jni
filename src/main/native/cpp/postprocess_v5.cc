@@ -306,9 +306,10 @@ int post_process_v5(int8_t *input0, int8_t *input1, int8_t *input2, int model_in
   int last_count = 0;
   group->count = 0;
   /* box valid detect target */
+  group->results.reserve(OBJ_NUMB_MAX_SIZE_V5);
   for (int i = 0; i < validCount; ++i)
   {
-    if (indexArray[i] == -1 || last_count >= OBJ_NUMB_MAX_SIZE)
+    if (indexArray[i] == -1 || last_count >= OBJ_NUMB_MAX_SIZE_V5)
     {
       continue;
     }
@@ -321,12 +322,14 @@ int post_process_v5(int8_t *input0, int8_t *input1, int8_t *input2, int model_in
     int id = classId[n];
     float obj_conf = objProbs[i];
 
-    group->results[last_count].box.left = (int)(clamp(x1, 0, model_in_w) / scale_w);
-    group->results[last_count].box.top = (int)(clamp(y1, 0, model_in_h) / scale_h);
-    group->results[last_count].box.right = (int)(clamp(x2, 0, model_in_w) / scale_w);
-    group->results[last_count].box.bottom = (int)(clamp(y2, 0, model_in_h) / scale_h);
-    group->results[last_count].obj_conf = obj_conf;
-    group->results[last_count].id = id;
+    detect_result_t det;
+    det.box.left = (int)(clamp(x1, 0, model_in_w) / scale_w);
+    det.box.top = (int)(clamp(y1, 0, model_in_h) / scale_h);
+    det.box.right = (int)(clamp(x2, 0, model_in_w) / scale_w);
+    det.box.bottom = (int)(clamp(y2, 0, model_in_h) / scale_h);
+    det.obj_conf = obj_conf;
+    det.id = id;
+    group->results.push_back(det);
 
     // char *label = labels[id];
     // strncpy(group->results[last_count].name, label, OBJ_NAME_MAX_SIZE);

@@ -44,11 +44,23 @@ protected:
     rknn_input_output_num io_num;
     std::vector<rknn_tensor_attr> input_attrs;
     std::vector<rknn_tensor_attr> output_attrs;
+    bool is_quant;
 
     rknn_input inputs[1];
 };
 
 class YoloV5Model : public YoloModel {
+    using YoloModel::YoloModel;
+
+    detect_result_group_t postProcess(std::vector<rknn_output> output,
+        DetectionFilterParams params, 
+        cv::Size inputImageSize,
+        cv::Size2d inputImageScale,
+        letterbox_t letterbox
+    );
+};
+
+class YoloV8Model : public YoloModel {
     using YoloModel::YoloModel;
 
     detect_result_group_t postProcess(std::vector<rknn_output> output,

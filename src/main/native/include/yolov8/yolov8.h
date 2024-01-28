@@ -18,8 +18,7 @@
 
 #include "rknn_api.h"
 #include "common.h"
-#include "postprocess.h"
-#include "postprocess.h"
+#include "postprocess_v8.h"
 
 #include "opencv2/core/core.hpp"
 

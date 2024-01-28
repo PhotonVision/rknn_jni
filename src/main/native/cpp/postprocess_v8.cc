@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "yolov8/yolov8.h"
-
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -23,10 +21,8 @@
 
 #include <set>
 #include <vector>
-#include "include/postprocess.h"
-#define LABEL_NALE_TXT_PATH "./model/coco_80_labels_list.txt"
-
-static char *labels[OBJ_CLASS_NUM];
+#include "yolov8/postprocess_v8.h"
+#include "postprocess_v5.h"
 
 inline static int clamp(float val, int min, int max) { return val > min ? (val < max ? val : max) : min; }
 
@@ -223,7 +219,7 @@ static int process_i8(int8_t *box_tensor, int32_t box_zp, float box_scale,
                       std::vector<float> &boxes, 
                       std::vector<float> &objProbs, 
                       std::vector<int> &classId, 
-                      float threshold)
+                      float threshold, int numClasses)
 {
     int validCount = 0;
     int grid_len = grid_h * grid_w;
@@ -245,7 +241,7 @@ static int process_i8(int8_t *box_tensor, int32_t box_zp, float box_scale,
             }
 
             int8_t max_score = -score_zp;
-            for (int c= 0; c< OBJ_CLASS_NUM; c++){
+            for (int c= 0; c< numClasses; c++){
                 if ((score_tensor[offset] > score_thres_i8) && (score_tensor[offset] > max_score))
                 {
                     max_score = score_tensor[offset];
@@ -291,7 +287,7 @@ static int process_fp32(float *box_tensor, float *score_tensor, float *score_sum
                         std::vector<float> &boxes, 
                         std::vector<float> &objProbs, 
                         std::vector<int> &classId, 
-                        float threshold)
+                        float threshold, int numClasses)
 {
     int validCount = 0;
     int grid_len = grid_h * grid_w;
@@ -310,7 +306,7 @@ static int process_fp32(float *box_tensor, float *score_tensor, float *score_sum
             }
 
             float max_score = 0;
-            for (int c= 0; c< OBJ_CLASS_NUM; c++){
+            for (int c= 0; c< numClasses; c++){
                 if ((score_tensor[offset] > threshold) && (score_tensor[offset] > max_score))
                 {
                     max_score = score_tensor[offset];
@@ -352,7 +348,7 @@ static int process_fp32(float *box_tensor, float *score_tensor, float *score_sum
 }
 
 
-int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, BOX_RECT *padding, float conf_threshold, float nms_threshold, detect_result_group_t *od_results)
+int post_process_v8(cv::Size modelSize, rknn_output *outputs, BOX_RECT *padding, float conf_threshold, float nms_threshold, detect_result_group_t *od_results, int numClasses, std::vector<rknn_tensor_attr> &output_attrs, bool is_quant, int n_outputs)
 {
     std::vector<float> filterBoxes;
     std::vector<float> objProbs;
@@ -361,14 +357,14 @@ int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, BOX_RECT *pa
     int stride = 0;
     int grid_h = 0;
     int grid_w = 0;
-    int model_in_w = app_ctx->model_width;
-    int model_in_h = app_ctx->model_height;
+    int model_in_w = modelSize.width;
+    int model_in_h = modelSize.height;
 
     memset(od_results, 0, sizeof(detect_result_group_t));
 
     // default 3 branch
-    int dfl_len = app_ctx->output_attrs[0].dims[1] /4;
-    int output_per_branch = app_ctx->io_num.n_output / 3;
+    int dfl_len = output_attrs[0].dims[1] /4;
+    int output_per_branch = n_outputs / 3;
     for (int i = 0; i < 3; i++)
     {
 
@@ -377,29 +373,29 @@ int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, BOX_RECT *pa
         float score_sum_scale = 1.0;
         if (output_per_branch == 3){
             score_sum = outputs[i*output_per_branch + 2].buf;
-            score_sum_zp = app_ctx->output_attrs[i*output_per_branch + 2].zp;
-            score_sum_scale = app_ctx->output_attrs[i*output_per_branch + 2].scale;
+            score_sum_zp = output_attrs[i*output_per_branch + 2].zp;
+            score_sum_scale = output_attrs[i*output_per_branch + 2].scale;
         }
         int box_idx = i*output_per_branch;
         int score_idx = i*output_per_branch + 1;
 
-        grid_h = app_ctx->output_attrs[box_idx].dims[2];
-        grid_w = app_ctx->output_attrs[box_idx].dims[3];
+        grid_h = output_attrs[box_idx].dims[2];
+        grid_w = output_attrs[box_idx].dims[3];
         stride = model_in_h / grid_h;
 
-        if (app_ctx->is_quant)
+        if (is_quant)
         {
-            validCount += process_i8((int8_t *)outputs[box_idx].buf, app_ctx->output_attrs[box_idx].zp, app_ctx->output_attrs[box_idx].scale,
-                                     (int8_t *)outputs[score_idx].buf, app_ctx->output_attrs[score_idx].zp, app_ctx->output_attrs[score_idx].scale,
+            validCount += process_i8((int8_t *)outputs[box_idx].buf, output_attrs[box_idx].zp, output_attrs[box_idx].scale,
+                                     (int8_t *)outputs[score_idx].buf, output_attrs[score_idx].zp, output_attrs[score_idx].scale,
                                      (int8_t *)score_sum, score_sum_zp, score_sum_scale,
                                      grid_h, grid_w, stride, dfl_len, 
-                                     filterBoxes, objProbs, classId, conf_threshold);
+                                     filterBoxes, objProbs, classId, conf_threshold, numClasses);
         }
         else
         {
             validCount += process_fp32((float *)outputs[box_idx].buf, (float *)outputs[score_idx].buf, (float *)score_sum,
                                        grid_h, grid_w, stride, dfl_len, 
-                                       filterBoxes, objProbs, classId, conf_threshold);
+                                       filterBoxes, objProbs, classId, conf_threshold, numClasses);
         }
 
     }
@@ -431,9 +427,10 @@ int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, BOX_RECT *pa
     float rect_scale = static_cast<float>(width) / static_cast<float>(height);
 
     /* box valid detect target */
+    od_results->results.reserve(OBJ_NUMB_MAX_SIZE_V8);
     for (int i = 0; i < validCount; ++i)
     {
-        if (indexArray[i] == -1 || last_count >= OBJ_NUMB_MAX_SIZE)
+        if (indexArray[i] == -1 || last_count >= OBJ_NUMB_MAX_SIZE_V8)
         {
             continue;
         }
@@ -448,58 +445,16 @@ int post_process(rknn_app_context_t *app_ctx, rknn_output *outputs, BOX_RECT *pa
         int id = classId[n];
         float obj_conf = objProbs[i];
 
-        od_results->results[last_count].box.left = (int)(clamp(x1, 0, model_in_w) / rect_scale);
-        od_results->results[last_count].box.top = (int)(clamp(y1, 0, model_in_h) / rect_scale);
-        od_results->results[last_count].box.right = (int)(clamp(x2, 0, model_in_w) / rect_scale);
-        od_results->results[last_count].box.bottom = (int)(clamp(y2, 0, model_in_h) / rect_scale);
-        od_results->results[last_count].obj_conf = obj_conf;
-        od_results->results[last_count].id = id;
+        detect_result_t det;
+        det.box.left = (int)(clamp(x1, 0, model_in_w) / rect_scale);
+        det.box.top = (int)(clamp(y1, 0, model_in_h) / rect_scale);
+        det.box.right = (int)(clamp(x2, 0, model_in_w) / rect_scale);
+        det.box.bottom = (int)(clamp(y2, 0, model_in_h) / rect_scale);
+        det.obj_conf = obj_conf;
+        det.id = id;
+        od_results->results.push_back(det);
         last_count++;
     }
     od_results->count = last_count;
     return 0;
-}
-
-int init_post_process()
-{
-    labels[0] = "note";
-    labels[1] = "red bumper";
-    labels[2] = "blue bumper";
-
-    // int ret = 0;
-    // ret = loadLabelName(LABEL_NALE_TXT_PATH, labels);
-    // if (ret < 0)
-    // {
-    //     printf("Load %s failed!\n", LABEL_NALE_TXT_PATH);
-    //     return -1;
-    // }
-    return 0;
-}
-
-char *coco_cls_to_name(int cls_id)
-{
-
-    if (cls_id >= OBJ_CLASS_NUM)
-    {
-        return "null";
-    }
-
-    if (labels[cls_id])
-    {
-        return labels[cls_id];
-    }
-
-    return "null";
-}
-
-void deinit_post_process()
-{
-    for (int i = 0; i < OBJ_CLASS_NUM; i++)
-    {
-        if (labels[i] != nullptr)
-        {
-            free(labels[i]);
-            labels[i] = nullptr;
-        }
-    }
 }

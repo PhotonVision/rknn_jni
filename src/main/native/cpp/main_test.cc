@@ -6,12 +6,12 @@
 int main_test(const char* model_name)
 {
 
-    YoloModel *wrapper  = new YoloV5Model(model_name, 1, ModelVersion::YOLO_V5, 0);
+    YoloModel *wrapper  = new YoloV5Model(model_name, 3, ModelVersion::YOLO_V5, 0);
     std::cout << "created: " << (long unsigned int)wrapper << std::endl;
 
     for (int j = 0; j < 1; j++) {
         cv::Mat img;
-        img = cv::imread("../silly_notes.png");
+        img = cv::imread("silly_notes.png");
 
         DetectionFilterParams params {
             .nms_thresh = 0.45,
@@ -56,8 +56,11 @@ int main_test(const char* model_name)
 
 #include <thread>
 int main() {
-    std::vector<std::thread> threads;
-for (int i=1; i<=1; ++i)
-    threads.emplace_back(std::thread([]() {main_test("../note-640-640-yolov5s.rknn");}));
-    for (auto& th : threads) th.join();
+//     std::vector<std::thread> threads;
+// for (int i=1; i<=1; ++i)
+//     threads.emplace_back(std::thread([]() {main_test("../note-640-640-yolov5s.rknn");}));
+//     for (auto& th : threads) th.join();
+
+    // main_test("note-robot-yolov8s-quant.rknn");
+    main_test("note-640-640-yolov5s.rknn");
 }

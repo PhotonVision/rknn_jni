@@ -3,6 +3,7 @@
 #include <opencv2/imgproc.hpp>
 #include "im2d.h"
 #include "preprocess.h"
+#include "yolov8/postprocess_v8.h"
 
 static unsigned char *load_data(FILE *fp, size_t ofst, size_t sz)
 {
@@ -145,6 +146,17 @@ YoloModel::YoloModel(std::string modelPath, int num_classes_, ModelVersion type_
         dump_tensor_attr(&(output_attrs[i]));
     }
 
+    // TODO
+    if (output_attrs[0].qnt_type == RKNN_TENSOR_QNT_AFFINE_ASYMMETRIC && output_attrs[0].type == RKNN_TENSOR_INT8)
+    {
+        is_quant = true;
+    }
+    else
+    {
+        is_quant = false;
+    }
+    printf("Model quantized? %s\n", is_quant ? "YES" : "NO");
+
     if (input_attrs[0].fmt == RKNN_TENSOR_NCHW)
     {
         printf("model is NCHW input fmt\n");
@@ -229,6 +241,7 @@ detect_result_group_t YoloModel::forward(cv::Mat &orig_img, DetectionFilterParam
     for (int i = 0; i < io_num.n_output; i++)
     {
         memset(&outputs[i], 0, sizeof(rknn_output));
+        // todo hard coded to quantize
         outputs[i].want_float = 0;
     }
 
@@ -281,3 +294,22 @@ detect_result_group_t YoloV5Model::postProcess(std::vector<rknn_output> outputs,
 }
 
 
+detect_result_group_t YoloV8Model::postProcess(std::vector<rknn_output> outputs,
+        DetectionFilterParams params, 
+        cv::Size inputImageSize,
+        cv::Size2d imageScale,
+        letterbox_t letterbox) {
+    detect_result_group_t result;
+
+    BOX_RECT padding {
+        0,
+        inputImageSize.width,
+        0,
+        inputImageSize.height,
+    };
+
+    post_process_v8(modelSize, outputs.data(), &padding, params.box_thresh, params.nms_thresh, &result, 
+        numClasses, output_attrs, is_quant, io_num.n_output);
+
+    return result;
+}
