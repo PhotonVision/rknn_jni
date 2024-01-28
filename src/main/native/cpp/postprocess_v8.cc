@@ -424,7 +424,8 @@ int post_process_v8(cv::Size modelSize, rknn_output *outputs, BOX_RECT *padding,
 
     int width = padding->right - padding->left;
     int height = padding->bottom - padding->top;
-    float rect_scale = static_cast<float>(width) / static_cast<float>(height);
+    float widthScale = (float)width / modelSize.width;
+    float heightScale = (float)height / modelSize.height;
 
     /* box valid detect target */
     od_results->results.reserve(OBJ_NUMB_MAX_SIZE_V8);
@@ -446,10 +447,10 @@ int post_process_v8(cv::Size modelSize, rknn_output *outputs, BOX_RECT *padding,
         float obj_conf = objProbs[i];
 
         detect_result_t det;
-        det.box.left = (int)(clamp(x1, 0, model_in_w) / rect_scale);
-        det.box.top = (int)(clamp(y1, 0, model_in_h) / rect_scale);
-        det.box.right = (int)(clamp(x2, 0, model_in_w) / rect_scale);
-        det.box.bottom = (int)(clamp(y2, 0, model_in_h) / rect_scale);
+        det.box.left = (int)(clamp(x1, 0, model_in_w) * widthScale);
+        det.box.top = (int)(clamp(y1, 0, model_in_h) * heightScale);
+        det.box.right = (int)(clamp(x2, 0, model_in_w) * widthScale);
+        det.box.bottom = (int)(clamp(y2, 0, model_in_h) * heightScale);
         det.obj_conf = obj_conf;
         det.id = id;
         od_results->results.push_back(det);
