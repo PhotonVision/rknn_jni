@@ -50,8 +50,11 @@ protected:
 };
 
 class YoloV5Model : public YoloModel {
-    using YoloModel::YoloModel;
+public:
+    YoloV5Model(std::string modelPath, int num_classes_, int coreNumber) 
+        : YoloModel(modelPath, num_classes_, ModelVersion::YOLO_V5, coreNumber) {}
 
+protected:
     detect_result_group_t postProcess(std::vector<rknn_output> output,
         DetectionFilterParams params, 
         cv::Size inputImageSize,
@@ -61,8 +64,11 @@ class YoloV5Model : public YoloModel {
 };
 
 class YoloV8Model : public YoloModel {
-    using YoloModel::YoloModel;
+public:
+    YoloV8Model(std::string modelPath, int num_classes_, int coreNumber) 
+        : YoloModel(modelPath, num_classes_, ModelVersion::YOLO_V8, coreNumber) {}
 
+protected:
     detect_result_group_t postProcess(std::vector<rknn_output> output,
         DetectionFilterParams params, 
         cv::Size inputImageSize,

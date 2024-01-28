@@ -81,9 +81,13 @@ public class RknnJNI {
      * @param modelPath Absolute path to the model on disk
      * @param numClasses How many classes. MUST MATCH or native code segfaults
      * @param modelVer Which model is being used. Detections will be incorrect if not set to corrresponding model.
-     * @return
+     * @return Pointer to the detector in native memory
      */
-    public static native long create(String modelPath, int numClasses, int modelVer);
+    public static native long create(String modelPath, int numClasses, int modelVer, int coreNum);
+    
+    /**
+     * Delete all native resources assocated with a detector
+     */
     public static native long destroy(long ptr);
 
     /**

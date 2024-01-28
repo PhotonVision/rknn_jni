@@ -60,15 +60,19 @@ static jobject MakeJObject(JNIEnv *env, const detect_result_t &result) {
  */
 JNIEXPORT jlong JNICALL
 Java_org_photonvision_rknn_RknnJNI_create
-  (JNIEnv *env, jclass, jstring javaString, jint numClasses, jint modelVer)
+  (JNIEnv *env, jclass, jstring javaString, jint numClasses, jint modelVer, jint coreNum)
 {
   const char *nativeString = env->GetStringUTFChars(javaString, 0);
   std::printf("Creating for %s\n", nativeString);
 
-  // todo matt pass from java or increment in native. number is 0,1,or 2
-  int CORE_NUM = 0;  
-
-  auto ret = new YoloV5Model(nativeString, numClasses, static_cast<ModelVersion>(modelVer), CORE_NUM);
+  YoloModel *ret;
+  if (static_cast<ModelVersion>(modelVer) == ModelVersion::YOLO_V5) {
+    printf("Starting with version 5\n");
+    ret = new YoloV5Model(nativeString, numClasses, coreNum);
+  } else {
+    printf("Starting with version 8\n");
+    ret = new YoloV8Model(nativeString, numClasses, coreNum);
+  }
   env->ReleaseStringUTFChars(javaString, nativeString);
   return reinterpret_cast<jlong>(ret);
 }

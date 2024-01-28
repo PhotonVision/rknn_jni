@@ -23,7 +23,7 @@ ext {
     pubVersion = versionString
     isDev = pubVersion.startsWith("dev")
 
-    wpilibVersion = "2024.1.1"
+    wpilibVersion = "2024.2.1"
     wpimathVersion = wpilibVersion
     openCVversion = "4.8.0-2"
 }

@@ -59,7 +59,8 @@
         "stdexcept": "cpp",
         "stop_token": "cpp",
         "streambuf": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "map": "cpp"
     },
     "java.configuration.updateBuildConfiguration": "automatic"
 }
