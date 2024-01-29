@@ -95,6 +95,12 @@ YoloModel::YoloModel(std::string modelPath, int num_classes_, ModelVersion type_
     case 2:
         core_mask = RKNN_NPU_CORE_2;
         break;
+    case 10:
+        core_mask = RKNN_NPU_CORE_0_1;
+        break;
+    case 210:
+        core_mask = RKNN_NPU_CORE_0_1_2;
+        break;
     default:
         core_mask = RKNN_NPU_CORE_AUTO;
         break;
