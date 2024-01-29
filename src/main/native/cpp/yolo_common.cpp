@@ -86,6 +86,9 @@ YoloModel::YoloModel(std::string modelPath, int num_classes_, ModelVersion type_
     rknn_core_mask core_mask;
     switch (coreNumber)
     {
+    case -1:
+        core_mask = RKNN_NPU_CORE_AUTO;
+        break;
     case 0:
         core_mask = RKNN_NPU_CORE_0;
         break;
@@ -94,6 +97,15 @@ YoloModel::YoloModel(std::string modelPath, int num_classes_, ModelVersion type_
         break;
     case 2:
         core_mask = RKNN_NPU_CORE_2;
+        break;
+    case 10:
+        core_mask = RKNN_NPU_CORE_0_1;
+        break;
+    case 210:
+        core_mask = RKNN_NPU_CORE_0_1_2;
+        break;
+    default:
+        throw std::runtime_error("invalid core selection! core selected: " + coreNumber);
         break;
     }
     ret = rknn_set_core_mask(ctx, core_mask);
