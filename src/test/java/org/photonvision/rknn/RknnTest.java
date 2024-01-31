@@ -55,16 +55,24 @@ public class RknnTest {
 
          
         System.out.println("Loading bus");
-        Mat img = Imgcodecs.imread("silly_notes2.png");
+        Mat img = Imgcodecs.imread("silly_notes.png");
+        Mat img2 = Imgcodecs.imread("silly_notes2.png");
 
         System.out.println("Loading rknn-jni");
         System.load("/home/coolpi/rknn_jni/cmake_build/librknn_jni.so");
 
-        System.out.println("Creating detector");
-        long ptr = RknnJNI.create("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5.ordinal(), 0);
+        System.out.println("Creating detector on three cores");
+        long ptr = RknnJNI.create("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5.ordinal(), 210);
         
         System.out.println("Running detector");
         var ret = RknnJNI.detect(ptr, img.getNativeObjAddr(), .45, .25);
+        System.out.println(Arrays.toString(ret));
+
+        System.out.println("Changing detector to run on core 0");
+        System.out.println("return code: " + RknnJNI.setCoreMask(ptr, 0));
+
+        System.out.println("Running detector again");
+        ret = RknnJNI.detect(ptr, img2.getNativeObjAddr(), .45, .25);
         System.out.println(Arrays.toString(ret));
 
         System.out.println("Killing detector");

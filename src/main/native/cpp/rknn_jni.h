@@ -35,6 +35,12 @@ JNIEXPORT jlong JNICALL Java_org_photonvision_rknn_RknnJNI_create(JNIEnv *,
                                                                   jstring,
                                                                   jint, jint, jint);
 
+
+JNIEXPORT jint JNICALL Java_org_photonvision_rknn_RknnJNI_setCoreMask(JNIEnv *,
+                                                                  jclass,
+                                                                  jlong,
+                                                                  jint);
+
 /*
  * Class:     org_photonvision_rknn_RknnJNI
  * Method:    destroy

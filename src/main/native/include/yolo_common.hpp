@@ -19,6 +19,8 @@ class YoloModel {
 public:
     YoloModel(std::string modelPath, int num_classes_, ModelVersion type_, int coreNumber);
 
+    int YoloModel::changeCoreMask(int coreNumber);
+
     detect_result_group_t forward(cv::Mat &orig_img, DetectionFilterParams params);
 
     ~YoloModel();

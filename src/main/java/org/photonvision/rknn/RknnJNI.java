@@ -84,6 +84,15 @@ public class RknnJNI {
      * @return Pointer to the detector in native memory
      */
     public static native long create(String modelPath, int numClasses, int modelVer, int coreNum);
+
+    /**
+     * Given an already running detector, change the bitmask controlling which
+     * of the 3 cores the model is running on
+     * @param ptr Pointer to detector in native memory
+     * @param desiredCore Which of the three cores to operate on
+     * @return return code of rknn_set_core_mask call, indicating success or failure
+     */
+    public static native int setCoreMask(long ptr, int desiredCore);
     
     /**
      * Delete all native resources assocated with a detector

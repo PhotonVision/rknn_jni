@@ -82,37 +82,8 @@ YoloModel::YoloModel(std::string modelPath, int num_classes_, ModelVersion type_
         throw std::runtime_error("rknn_init error ret=" + ret);
     }
 
-    // 设置模型绑定的核心/Set the core of the model that needs to be bound
-    rknn_core_mask core_mask;
-    switch (coreNumber)
-    {
-    case -1:
-        core_mask = RKNN_NPU_CORE_AUTO;
-        break;
-    case 0:
-        core_mask = RKNN_NPU_CORE_0;
-        break;
-    case 1:
-        core_mask = RKNN_NPU_CORE_1;
-        break;
-    case 2:
-        core_mask = RKNN_NPU_CORE_2;
-        break;
-    case 10:
-        core_mask = RKNN_NPU_CORE_0_1;
-        break;
-    case 210:
-        core_mask = RKNN_NPU_CORE_0_1_2;
-        break;
-    default:
-        throw std::runtime_error("invalid core selection! core selected: " + coreNumber);
-        break;
-    }
-    ret = rknn_set_core_mask(ctx, core_mask);
-    if (ret < 0)
-    {
-        throw std::runtime_error("rknn_init core error ret=" + ret);
-    }
+    // hard coded to let npu decide where the model runs
+    this->changeCoreMask(-1);
 
     rknn_sdk_version version;
     ret = rknn_query(ctx, RKNN_QUERY_SDK_VERSION, &version, sizeof(rknn_sdk_version));
@@ -204,6 +175,40 @@ YoloModel::~YoloModel() {
         free(model_data);
 }
 
+int YoloModel::changeCoreMask(int coreNumber) {
+        // 设置模型绑定的核心/Set the core of the model that needs to be bound
+    rknn_core_mask core_mask;
+    switch (coreNumber)
+    {
+    case -1:
+        core_mask = RKNN_NPU_CORE_AUTO;
+        break;
+    case 0:
+        core_mask = RKNN_NPU_CORE_0;
+        break;
+    case 1:
+        core_mask = RKNN_NPU_CORE_1;
+        break;
+    case 2:
+        core_mask = RKNN_NPU_CORE_2;
+        break;
+    case 10:
+        core_mask = RKNN_NPU_CORE_0_1;
+        break;
+    case 210:
+        core_mask = RKNN_NPU_CORE_0_1_2;
+        break;
+    default:
+        throw std::runtime_error("invalid core selection! core selected: " + coreNumber);
+        break;
+    }
+    ret = rknn_set_core_mask(ctx, core_mask);
+    if (ret < 0)
+    {
+        throw std::runtime_error("rknn_init core error ret=" + ret);
+    }
+    return ret;
+}
 
 detect_result_group_t YoloModel::forward(cv::Mat &orig_img, DetectionFilterParams params) {
     cv::Mat img;
