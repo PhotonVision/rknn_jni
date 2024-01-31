@@ -202,7 +202,7 @@ int YoloModel::changeCoreMask(int coreNumber) {
         throw std::runtime_error("invalid core selection! core selected: " + coreNumber);
         break;
     }
-    ret = rknn_set_core_mask(ctx, core_mask);
+    int ret = rknn_set_core_mask(ctx, core_mask);
     if (ret < 0)
     {
         throw std::runtime_error("rknn_init core error ret=" + ret);
