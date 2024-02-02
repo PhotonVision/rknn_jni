@@ -83,7 +83,7 @@ YoloModel::YoloModel(std::string modelPath, int num_classes_, ModelVersion type_
     }
 
     // hard coded to let npu decide where the model runs
-    this->changeCoreMask(-1);
+    this->changeCoreMask(coreNumber);
 
     rknn_sdk_version version;
     ret = rknn_query(ctx, RKNN_QUERY_SDK_VERSION, &version, sizeof(rknn_sdk_version));
