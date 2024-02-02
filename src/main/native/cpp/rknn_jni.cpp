@@ -77,6 +77,15 @@ Java_org_photonvision_rknn_RknnJNI_create
   return reinterpret_cast<jlong>(ret);
 }
 
+JNIEXPORT jint JNICALL Java_org_photonvision_rknn_RknnJNI_setCoreMask(JNIEnv *env,
+                                                                  jclass,
+                                                                  jlong ptr,
+                                                                  jint coreMask)
+{
+  YoloModel *yolo = reinterpret_cast<YoloModel *>(ptr);
+  return yolo->changeCoreMask(coreMask);
+}
+
 /*
  * Class:     org_photonvision_rknn_RknnJNI
  * Method:    destroy
