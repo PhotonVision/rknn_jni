@@ -4,8 +4,11 @@ def nativeName = wpilibTools.platformMapper.currentPlatform.platformName;
 def artifactGroupId = 'org.photonvision'
 def baseArtifactId = "rknn_jni"
 
+def jniType = project.findProperty("PublishType") ?: "";
+println("Building with JNI publish type: " + jniType);
+
 task nativeLibraryJar(type: Jar, dependsOn: copyNativeLibrary) {
-    archiveClassifier = nativeName
+    archiveClassifier = nativeName + jniType
     from outputsFolder
 }
 build.dependsOn nativeLibraryJar
@@ -16,7 +19,7 @@ publishing {
             url ('https://maven.photonvision.org/repository/' + (isDev ? 'snapshots' : 'internal'))
             credentials {
                 username 'ghactions'
-                password System.getenv("ARTIFACTORY_API_KEY")
+                password 'kCPJugusxV5i8F'
             }
         }
     }
@@ -32,7 +35,7 @@ publishing {
         mavenJNI(MavenPublication) {
             groupId = artifactGroupId
             artifactId = "${baseArtifactId}-jni"
-            version = pubVersion;// + "-" + nativeName;
+            version = pubVersion;
 
             artifact nativeLibraryJar
         }
@@ -41,6 +44,6 @@ publishing {
 
 tasks.withType(PublishToMavenRepository) {
     doFirst {
-        println("Publishing mrcal-java to " + repository.url)
+        println("Publishing rknn-jni to " + repository.url)
     }
 }

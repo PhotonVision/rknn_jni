@@ -11,8 +11,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - build-type: Release
+            publish-type: ""
+          - build-type: Debug
+            publish-type: "debug"
+
+    steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
@@ -36,25 +45,28 @@ jobs:
         commands: |
             apt-get update
             apt-get install -y cmake build-essential default-jdk openjdk-17-jdk
-            cmake -B cmake_build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_build -DOPENCV_ARCH=linuxarm64
+            ls
+            find .
+            pwd
+            cmake -B cmake_build -S . -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DCMAKE_INSTALL_PREFIX=cmake_build -DOPENCV_ARCH=linuxarm64
             cmake --build cmake_build --target install -- -j 4
 
     - run: find .
 
     - run: |
         chmod +x gradlew
-        ./gradlew build ${{ (startsWith(github.event_name, 'push') && 'publish') || '' }} -PArchOverride=linuxarm64 -x check
+        ./gradlew build ${{ (startsWith(github.event_name, 'push') && 'publish') || '' }} -PArchOverride=linuxarm64 -PPublishType=${{ matrix.publish-type }} -x check
       env:
         ARTIFACTORY_API_KEY: ${{ secrets.ARTIFACTORY_API_KEY }}
 
     - uses: actions/upload-artifact@v4
       name: Upload jar
       with:
-        name: librknn-jar-pi
+        name: librknn-jar-pi-${{matrix.build-type}}
         path: ${{ github.workspace }}/build/libs/*.jar
     - uses: actions/upload-artifact@v4
       with:
-        name: librknn
+        name: librknn-${{ matrix.build-type }}
         path: cmake_build/*.so
 
     # Push to dev release on pushes to master
@@ -65,13 +77,13 @@ jobs:
         rm: true
         files: |
           cmake_build/*.so
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && (startsWith(matrix.build-type, 'Release'))
 
     # Push to actual release, if tagged
     - uses: softprops/action-gh-release@v1
       with:
         files: |
           cmake_build/*.so
-      if: startsWith(github.ref, 'refs/tags/v')
+      if: startsWith(github.ref, 'refs/tags/v') && (startsWith(matrix.build-type, 'Release'))
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
