@@ -25,7 +25,7 @@ jobs:
             extra-cmake-args: ""
             jar-name: "Debug"
           - build-type: Debug
-            publish-type: "debug"
+            publish-type: "debugwithasan"
             extra-cmake-args: "-DENABLE_ASAN=ON"
             jar-name: "DebugWithAsan"
 
