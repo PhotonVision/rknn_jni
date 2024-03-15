@@ -40,16 +40,18 @@ import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.util.CombinedRuntimeLoader;
+import edu.wpi.first.cscore.VideoMode;
+import edu.wpi.first.util.PixelFormat;
 
 public class RknnTest {
-    
+
     @Test
-    public void testBasicBlobs() {
+    public void iterate() {
 
         try {
             CameraServerJNI.Helper.setExtractOnStaticLoad(false);
             CameraServerCvJNI.Helper.setExtractOnStaticLoad(false);
-        
+
             CombinedRuntimeLoader.loadLibraries(RknnTest.class, Core.NATIVE_LIBRARY_NAME, "cscorejni");
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -59,26 +61,40 @@ public class RknnTest {
         System.out.println(Core.getBuildInformation());
         System.out.println(Core.OpenCLApiCallError);
 
-         
+        for (int i = 0; i < 100; i++) {
+            testBasicBlobs();
+        }
+    }
+
+    public void testBasicBlobs() {
+
         System.out.println("Loading bus");
 
         System.out.println("Loading rknn-jni");
         System.load("/home/coolpi/rknn_jni/cmake_build/librknn_jni.so");
 
         System.out.println("Creating detector on three cores");
-        long ptr = RknnJNI.create("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5.ordinal(), 210);
-        
+        long ptr = RknnJNI.create("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5.ordinal(),
+                210);
+
         System.err.println("Grabbing camera");
         var cams = CameraServerJNI.enumerateUsbCameras();
         System.out.println(Arrays.toString(cams));
         var cam = new UsbCamera("RknnTest", cams[0].path);
         CvSink cvSink = new CvSink("opencv_USB Camera 0");
         cvSink.setSource(cam);
-        
+        cvSink.setEnabled(true);
+
+        cam.setVideoMode(new VideoMode(PixelFormat.kMJPEG, 640, 480, 30));
+
         System.out.println("Running detector");
         var img = new Mat();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             cvSink.grabFrame(img);
+            if (img.empty())
+                continue;
+
+            Imgcodecs.imwrite("out.png", img);
 
             var ret = RknnJNI.detect(ptr, img.getNativeObjAddr(), .45, .25);
             System.out.println(Arrays.toString(ret));
