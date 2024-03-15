@@ -34,8 +34,11 @@ import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.photonvision.rknn.RknnJNI.ModelVersion;
 
+import edu.wpi.first.cscore.CameraServerCvJNI;
+import edu.wpi.first.cscore.CameraServerJNI;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.util.CombinedRuntimeLoader;
 
 public class RknnTest {
@@ -44,7 +47,10 @@ public class RknnTest {
     public void testBasicBlobs() {
 
         try {
-            CombinedRuntimeLoader.loadLibraries(RknnTest.class, Core.NATIVE_LIBRARY_NAME);
+            CameraServerJNI.Helper.setExtractOnStaticLoad(false);
+            CameraServerCvJNI.Helper.setExtractOnStaticLoad(false);
+        
+            CombinedRuntimeLoader.loadLibraries(RknnTest.class, Core.NATIVE_LIBRARY_NAME, "cscorejni");
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -55,8 +61,6 @@ public class RknnTest {
 
          
         System.out.println("Loading bus");
-        Mat img = Imgcodecs.imread("silly_notes.png");
-        Mat img2 = Imgcodecs.imread("silly_notes2.png");
 
         System.out.println("Loading rknn-jni");
         System.load("/home/coolpi/rknn_jni/cmake_build/librknn_jni.so");
@@ -64,16 +68,24 @@ public class RknnTest {
         System.out.println("Creating detector on three cores");
         long ptr = RknnJNI.create("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5.ordinal(), 210);
         
+        System.err.println("Grabbing camera");
+        var cams = CameraServerJNI.enumerateUsbCameras();
+        System.out.println(Arrays.toString(cams));
+        var cam = new UsbCamera("RknnTest", cams[0].path);
+        CvSink cvSink = new CvSink("opencv_USB Camera 0");
+        cvSink.setSource(cam);
+        
         System.out.println("Running detector");
-        var ret = RknnJNI.detect(ptr, img.getNativeObjAddr(), .45, .25);
-        System.out.println(Arrays.toString(ret));
+        var img = new Mat();
+        for (int i = 0; i < 100; i++) {
+            cvSink.grabFrame(img);
 
-        System.out.println("Changing detector to run on core 0");
-        System.out.println("return code: " + RknnJNI.setCoreMask(ptr, 0));
-
-        System.out.println("Running detector again");
-        ret = RknnJNI.detect(ptr, img2.getNativeObjAddr(), .45, .25);
-        System.out.println(Arrays.toString(ret));
+            var ret = RknnJNI.detect(ptr, img.getNativeObjAddr(), .45, .25);
+            System.out.println(Arrays.toString(ret));
+        }
+        img.release();
+        cvSink.close();
+        cam.close();
 
         System.out.println("Killing detector");
         RknnJNI.destroy(ptr);
