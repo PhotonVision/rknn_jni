@@ -18,8 +18,10 @@ jobs:
         include:
           - build-type: Release
             publish-type: ""
+            extra-cmake-args: ""
           - build-type: Debug
             publish-type: "debug"
+            extra-cmake-args: "-DENABLE_ASAN=ON"
 
     steps:
     - uses: actions/checkout@v3
