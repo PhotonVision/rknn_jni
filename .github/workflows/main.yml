@@ -21,6 +21,9 @@ jobs:
             extra-cmake-args: ""
           - build-type: Debug
             publish-type: "debug"
+            extra-cmake-args: ""
+          - build-type: Debug with ASAN
+            publish-type: "debug"
             extra-cmake-args: "-DENABLE_ASAN=ON"
 
     steps:
@@ -50,7 +53,7 @@ jobs:
             ls
             find .
             pwd
-            cmake -B cmake_build -S . -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DCMAKE_INSTALL_PREFIX=cmake_build -DOPENCV_ARCH=linuxarm64
+            cmake -B cmake_build -S . -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DCMAKE_INSTALL_PREFIX=cmake_build -DOPENCV_ARCH=linuxarm64 ${{ matrix.extra-cmake-args }}
             cmake --build cmake_build --target install -- -j 4
 
     - run: find .
