@@ -100,7 +100,7 @@ def nativeTasks = wpilibTools.createExtractionTasks {
     configurationName = nativeConfigName
 }
 
-nativeTasks.addToSourceSetResources(sourceSets.main)
+nativeTasks.addToSourceSetResources(sourceSets.test)
 
 nativeConfig.dependencies.add wpilibTools.deps.wpilib("wpinet")
 nativeConfig.dependencies.add wpilibTools.deps.wpilib("wpiutil")
