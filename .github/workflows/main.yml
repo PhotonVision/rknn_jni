@@ -22,7 +22,7 @@ jobs:
           - build-type: Debug
             publish-type: "debug"
             extra-cmake-args: ""
-          - build-type: Debug with ASAN
+          - build-type: Debug
             publish-type: "debug"
             extra-cmake-args: "-DENABLE_ASAN=ON"
 
