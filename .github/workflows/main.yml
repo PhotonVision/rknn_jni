@@ -19,12 +19,15 @@ jobs:
           - build-type: Release
             publish-type: ""
             extra-cmake-args: ""
+            jar-name: "Release"
           - build-type: Debug
             publish-type: "debug"
             extra-cmake-args: ""
+            jar-name: "Debug"
           - build-type: Debug
             publish-type: "debug"
             extra-cmake-args: "-DENABLE_ASAN=ON"
+            jar-name: "DebugWithAsan"
 
     steps:
     - uses: actions/checkout@v3
@@ -67,7 +70,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       name: Upload jar
       with:
-        name: librknn-jar-pi-${{matrix.build-type}}
+        name: librknn-jar-pi-${{matrix.jar-name}}
         path: ${{ github.workspace }}/build/libs/*.jar
     - uses: actions/upload-artifact@v4
       with:
