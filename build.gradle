@@ -23,7 +23,7 @@ ext {
     pubVersion = versionString
     isDev = pubVersion.startsWith("dev")
 
-    wpilibVersion = "2024.2.1"
+    wpilibVersion = "2024.3.2"
     wpimathVersion = wpilibVersion
     openCVversion = "4.8.0-2"
 }
@@ -31,6 +31,7 @@ ext {
 wpi.getVersions().getOpencvVersion().convention(openCVversion);
 wpi.getVersions().getWpilibVersion().convention(wpilibVersion);
 wpi.getVersions().getWpimathVersion().convention(wpimathVersion);
+wpilibTools.deps.wpilibVersion = wpilibVersion
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
