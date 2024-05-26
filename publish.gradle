@@ -16,10 +16,10 @@ build.dependsOn nativeLibraryJar
 publishing {
     repositories {
         maven {
-            url ('https://maven.photonvision.org/repository/' + (isDev ? 'snapshots' : 'internal'))
+            url ('https://maven.photonvision.org/' + (isDev ? 'snapshots' : 'releases'))
             credentials {
                 username 'ghactions'
-                password 'kCPJugusxV5i8F'
+                password System.getenv("ARTIFACTORY_API_KEY")
             }
         }
     }
