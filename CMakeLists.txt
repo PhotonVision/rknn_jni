@@ -34,8 +34,8 @@ set(RGA_PATH ${CMAKE_SOURCE_DIR}/src/main/native/lib/3rdparty/rga/RK3588)
 set(RGA_LIB ${RGA_PATH}/lib/Linux/${LIB_ARCH}/librga.so)
 
 
-set(OPENCV_YEAR "frc2024")
-set(OPENCV_VERSION "4.8.0-2")
+set(OPENCV_YEAR "frc2025")
+set(OPENCV_VERSION "4.10.0-3")
 # also valid: windowsx86-64
 
 # type can be "", "debug", "static", or "staticdebug"
@@ -109,7 +109,7 @@ message("RGA is ${RGA_LIB}")
 
 add_executable(main_test src/main/native/cpp/main_test.cc)
 target_link_libraries(main_test ${PROJECT_NAME} ${RGA_LIB})
-target_include_directories(main_test PRIVATE 
+target_include_directories(main_test PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/native/include/model_zoo
     ${OPENCV_INCLUDE_PATH}
