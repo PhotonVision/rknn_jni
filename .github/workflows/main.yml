@@ -46,7 +46,7 @@ jobs:
 
     - uses: pguyot/arm-runner-action@v2
       with:
-        base_image: https://github.com/Joshua-Riek/ubuntu-rockchip/releases/download/v1.30/ubuntu-22.04.3-preinstalled-server-arm64-orangepi-5.img.xz
+        base_image: https://github.com/PhotonVision/photon-image-modifier/releases/download/v2025.0.0-beta-7/photonvision_opi5.img.xz
         cpu: cortex-a7
         image_additional_mb: 1500
         bind_mount_repository: true
