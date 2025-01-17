@@ -11,9 +11,12 @@ int main_test(ModelVersion version)
     if (version == ModelVersion::YOLO_V5) {
         printf("Starting with version 5\n");
         wrapper = new YoloV5Model("note-640-640-yolov5s.rknn", 1, 0);
-    } else {
+    } else if (version == ModelVersion::YOLO_V8) {
         printf("Starting with version 8\n");
         wrapper = new YoloV8Model("note-robot-yolov8s-quant.rknn", 3, 0);
+    } else {
+        printf("Starting with version 11\n");
+        wrapper = new YoloV11Model("note-robot-yolov11s-quant.rknn", 3, 0);
     }
     
     std::cout << "created: " << (long unsigned int)wrapper << std::endl;
