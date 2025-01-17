@@ -72,9 +72,12 @@ Java_org_photonvision_rknn_RknnJNI_create
   } else if (static_cast<ModelVersion>(modelVer) == ModelVersion::YOLO_V8) {
     printf("Starting with version 8\n");
     ret = new YoloV8Model(nativeString, numClasses, coreNum);
-  } else{
+  } else if (static_cast<ModelVersion>(modelVer) == ModelVersion::YOLO_V11) {
     printf("Starting with version 11\n");
     ret = new YoloV11Model(nativeString, numClasses, coreNum);
+  } else {
+    printf("Unknown version\n");
+    return 0;
   }
   env->ReleaseStringUTFChars(javaString, nativeString);
   return reinterpret_cast<jlong>(ret);

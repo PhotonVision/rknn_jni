@@ -81,7 +81,7 @@ protected:
 
 class YoloV11Model : public YoloModel {
 public:
-    YoloV8Model(std::string modelPath, int num_classes_, int coreNumber) 
+    YoloV11Model(std::string modelPath, int num_classes_, int coreNumber) 
         : YoloModel(modelPath, num_classes_, ModelVersion::YOLO_V11, coreNumber) {}
 
 protected:
