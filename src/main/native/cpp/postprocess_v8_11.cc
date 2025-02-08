@@ -21,7 +21,7 @@
 
 #include <set>
 #include <vector>
-#include "yolov8/postprocess_v8.h"
+#include "yolov8_11/postprocess_v8_11.h"
 #include "yolov5/postprocess_v5.h"
 
 inline static int clamp(float val, int min, int max) { return val > min ? (val < max ? val : max) : min; }
@@ -348,7 +348,7 @@ static int process_fp32(float *box_tensor, float *score_tensor, float *score_sum
 }
 
 
-int post_process_v8(cv::Size modelSize, rknn_output *outputs, BOX_RECT *padding, float conf_threshold, float nms_threshold, detect_result_group_t *od_results, int numClasses, std::vector<rknn_tensor_attr> &output_attrs, bool is_quant, int n_outputs)
+int post_process_v8_11(cv::Size modelSize, rknn_output *outputs, BOX_RECT *padding, float conf_threshold, float nms_threshold, detect_result_group_t *od_results, int numClasses, std::vector<rknn_tensor_attr> &output_attrs, bool is_quant, int n_outputs)
 {
     std::vector<float> filterBoxes;
     std::vector<float> objProbs;
@@ -428,10 +428,10 @@ int post_process_v8(cv::Size modelSize, rknn_output *outputs, BOX_RECT *padding,
     float heightScale = (float)height / modelSize.height;
 
     /* box valid detect target */
-    od_results->results.reserve(OBJ_NUMB_MAX_SIZE_V8);
+    od_results->results.reserve(OBJ_NUMB_MAX_SIZE_V8_11);
     for (int i = 0; i < validCount; ++i)
     {
-        if (indexArray[i] == -1 || last_count >= OBJ_NUMB_MAX_SIZE_V8)
+        if (indexArray[i] == -1 || last_count >= OBJ_NUMB_MAX_SIZE_V8_11)
         {
             continue;
         }

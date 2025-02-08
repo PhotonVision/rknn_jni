@@ -75,7 +75,7 @@ add_library(${PROJECT_NAME}
     src/main/native/cpp/yolo_common.cpp
     src/main/native/cpp/preprocess.cc
     src/main/native/cpp/postprocess_v5.cc
-    src/main/native/cpp/postprocess_v8.cc
+    src/main/native/cpp/postprocess_v8_11.cc
 )
 
 

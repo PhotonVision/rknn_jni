@@ -3,7 +3,7 @@
 #include <opencv2/imgproc.hpp>
 #include "im2d.h"
 #include "preprocess.h"
-#include "yolov8/postprocess_v8.h"
+#include "yolov8_11/postprocess_v8_11.h"
 
 static unsigned char *load_data(FILE *fp, size_t ofst, size_t sz)
 {
@@ -326,7 +326,27 @@ detect_result_group_t YoloV8Model::postProcess(std::vector<rknn_output> outputs,
         inputImageSize.height,
     };
 
-    post_process_v8(modelSize, outputs.data(), &padding, params.box_thresh, params.nms_thresh, &result, 
+    post_process_v8_11(modelSize, outputs.data(), &padding, params.box_thresh, params.nms_thresh, &result, 
+        numClasses, output_attrs, is_quant, io_num.n_output);
+
+    return result;
+}
+
+detect_result_group_t YoloV11Model::postProcess(std::vector<rknn_output> outputs,
+        DetectionFilterParams params, 
+        cv::Size inputImageSize,
+        cv::Size2d imageScale,
+        BOX_RECT letterbox) {
+    detect_result_group_t result;
+
+    BOX_RECT padding {
+        0,
+        inputImageSize.width,
+        0,
+        inputImageSize.height,
+    };
+
+    post_process_v8_11(modelSize, outputs.data(), &padding, params.box_thresh, params.nms_thresh, &result, 
         numClasses, output_attrs, is_quant, io_num.n_output);
 
     return result;
