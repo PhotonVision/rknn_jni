@@ -9,9 +9,16 @@ on:
     branches: [ "main" ]
 
 jobs:
+  validation:
+    name: "Validation"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gradle/actions/wrapper-validation@v4
+
   build:
     runs-on: ubuntu-latest
-
+    needs: [validation]
     strategy:
       fail-fast: false
       matrix:
