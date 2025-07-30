@@ -85,7 +85,7 @@ tasks.register('copyNativeLibrary', Sync) {
 
     // And flatten, since windows is stupid
     eachFile {
-      println "Coping shared lib: $name"
+      println "Copying shared lib: $name"
       path = name
     }
     includeEmptyDirs = false
