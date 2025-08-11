@@ -70,6 +70,7 @@ public class RknnJNI {
 
     /**
      * Create a RKNN detector. Returns valid pointer on success, or NULL on error
+     *
      * @param modelPath Absolute path to the model on disk
      * @param numClasses How many classes. MUST MATCH or native code segfaults
      * @param modelVer Which model is being used. Detections will be incorrect if not set to corresponding model.
