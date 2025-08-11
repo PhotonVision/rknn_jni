@@ -19,8 +19,8 @@
 
 #include <cstdio>
 
-#include "yolo_common.hpp"
 #include "wpi_jni_common.h"
+#include "yolo_common.hpp"
 
 static JClass detectionResultClass;
 
@@ -56,37 +56,42 @@ static jobject MakeJObject(JNIEnv *env, const detect_result_t &result) {
 /*
  * Class:     org_photonvision_rknn_RknnJNI
  * Method:    create
- * Signature: (Ljava/lang/String;I)J
+ * Signature: (Ljava/lang/String;III)J
  */
 JNIEXPORT jlong JNICALL
 Java_org_photonvision_rknn_RknnJNI_create
-  (JNIEnv *env, jclass, jstring javaString, jint numClasses, jint modelVer, jint coreNum)
+  (JNIEnv *env, jclass, jstring javaString, jint numClasses, jint modelVer,
+   jint coreNum)
 {
   const char *nativeString = env->GetStringUTFChars(javaString, 0);
   std::printf("Creating for %s\n", nativeString);
 
   YoloModel *ret;
   if (static_cast<ModelVersion>(modelVer) == ModelVersion::YOLO_V5) {
-    printf("Starting with version 5\n");
+    std::printf("Starting with version 5\n");
     ret = new YoloV5Model(nativeString, numClasses, coreNum);
   } else if (static_cast<ModelVersion>(modelVer) == ModelVersion::YOLO_V8) {
-    printf("Starting with version 8\n");
+    std::printf("Starting with version 8\n");
     ret = new YoloV8Model(nativeString, numClasses, coreNum);
   } else if (static_cast<ModelVersion>(modelVer) == ModelVersion::YOLO_V11) {
-    printf("Starting with version 11\n");
+    std::printf("Starting with version 11\n");
     ret = new YoloV11Model(nativeString, numClasses, coreNum);
   } else {
-    printf("Unknown version\n");
+    std::printf("Unknown version\n");
     return 0;
   }
   env->ReleaseStringUTFChars(javaString, nativeString);
   return reinterpret_cast<jlong>(ret);
 }
 
-JNIEXPORT jint JNICALL Java_org_photonvision_rknn_RknnJNI_setCoreMask(JNIEnv *env,
-                                                                  jclass,
-                                                                  jlong ptr,
-                                                                  jint coreMask)
+/*
+ * Class:     org_photonvision_rknn_RknnJNI
+ * Method:    setCoreMask
+ * Signature: (JI)I
+ */
+JNIEXPORT jint JNICALL
+Java_org_photonvision_rknn_RknnJNI_setCoreMask
+  (JNIEnv *env, jclass, jlong ptr, jint coreMask)
 {
   YoloModel *yolo = reinterpret_cast<YoloModel *>(ptr);
   return yolo->changeCoreMask(coreMask);
@@ -107,7 +112,7 @@ Java_org_photonvision_rknn_RknnJNI_destroy
 /*
  * Class:     org_photonvision_rknn_RknnJNI
  * Method:    detect
- * Signature: (JJDDI)[Ljava/lang/Object;
+ * Signature: (JJDD)[Ljava/lang/Object;
  */
 JNIEXPORT jobjectArray JNICALL
 Java_org_photonvision_rknn_RknnJNI_detect

@@ -1,15 +1,19 @@
-import os
 import sys
-import numpy as np
+
 from rknn.api import RKNN
 
-DATASET_PATH = '../rknn_model_zoo/datasets/COCO/coco_subset_20.txt'
-DEFAULT_RKNN_PATH = 'src/test/resources/yolov7-tiny.rknn'
+DATASET_PATH = "../rknn_model_zoo/datasets/COCO/coco_subset_20.txt"
+DEFAULT_RKNN_PATH = "src/test/resources/yolov7-tiny.rknn"
 DEFAULT_QUANT = True
+
 
 def parse_arg():
     if len(sys.argv) < 3:
-        print("Usage: python3 {} onnx_model_path [platform] [dtype(optional)] [output_rknn_path(optional)]".format(sys.argv[0]));
+        print(
+            "Usage: python3 {} onnx_model_path [platform] [dtype(optional)] [output_rknn_path(optional)]".format(
+                sys.argv[0]
+            )
+        )
         print("       platform choose from [rk3562,rk3566,rk3568,rk3588]")
         print("       dtype choose from    [i8, fp]")
         exit(1)
@@ -20,10 +24,10 @@ def parse_arg():
     do_quant = DEFAULT_QUANT
     if len(sys.argv) > 3:
         model_type = sys.argv[3]
-        if model_type not in ['i8', 'fp']:
+        if model_type not in ["i8", "fp"]:
             print("ERROR: Invalid model type: {}".format(model_type))
             exit(1)
-        elif model_type == 'i8':
+        elif model_type == "i8":
             do_quant = True
         else:
             do_quant = False
@@ -35,41 +39,43 @@ def parse_arg():
 
     return model_path, platform, do_quant, output_path
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     model_path, platform, do_quant, output_path = parse_arg()
 
     # Create RKNN object
     rknn = RKNN(verbose=False)
 
     # Pre-process config
-    print('--> Config model')
-    rknn.config(mean_values=[[0, 0, 0]], std_values=[
-                    [255, 255, 255]], target_platform=platform)
-    print('done')
+    print("--> Config model")
+    rknn.config(
+        mean_values=[[0, 0, 0]], std_values=[[255, 255, 255]], target_platform=platform
+    )
+    print("done")
 
     # Load model
-    print('--> Loading model')
+    print("--> Loading model")
     ret = rknn.load_onnx(model=model_path)
     if ret != 0:
-        print('Load model failed!')
+        print("Load model failed!")
         exit(ret)
-    print('done')
+    print("done")
 
     # Build model
-    print('--> Building model')
+    print("--> Building model")
     ret = rknn.build(do_quantization=do_quant, dataset=DATASET_PATH)
     if ret != 0:
-        print('Build model failed!')
+        print("Build model failed!")
         exit(ret)
-    print('done')
+    print("done")
 
     # Export rknn model
-    print('--> Export rknn model')
+    print("--> Export rknn model")
     ret = rknn.export_rknn(output_path)
     if ret != 0:
-        print('Export rknn model failed!')
+        print("Export rknn model failed!")
         exit(ret)
-    print('done')
+    print("done")
 
     # Release
     rknn.release()

@@ -18,7 +18,10 @@ modifiableFileExclude {
   \.dll$
   \.webp$
   \.ico$
+  \.rknn$
   gradlew
+  3rdparty*
+  rknn_api.h
 }
 
 includeProject {

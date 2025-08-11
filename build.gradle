@@ -85,8 +85,8 @@ tasks.register('copyNativeLibrary', Sync) {
 
     // And flatten, since windows is stupid
     eachFile {
-      println "Copying shared lib: $name"
-      path = name
+        println "Copying shared lib: $name"
+        path = name
     }
     includeEmptyDirs = false
 
@@ -99,6 +99,41 @@ def nativeConfig = configurations.create(nativeConfigName)
 
 def nativeTasks = wpilibTools.createExtractionTasks {
     configurationName = nativeConfigName
+}
+
+spotless {
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**', '**/src/generated/**'
+        }
+        toggleOffOn()
+        googleJavaFormat()
+        indentWithTabs(2)
+        indentWithSpaces(4)
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    groovyGradle {
+        target fileTree('.') {
+            include '**/*.gradle'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        greclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format 'misc', {
+        target fileTree('.') {
+            include '**/*.md', '**/.gitignore'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        trimTrailingWhitespace()
+        indentWithSpaces(2)
+        endWithNewline()
+    }
 }
 
 nativeTasks.addToSourceSetResources(sourceSets.test)
