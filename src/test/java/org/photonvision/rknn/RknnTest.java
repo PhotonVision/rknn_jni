@@ -87,6 +87,9 @@ public class RknnTest {
 
     @Test
     public void testQuantizationCheck() {
+        System.out.println("Loading rknn-jni");
+        System.load("/home/coolpi/rknn_jni/cmake_build/librknn_jni.so");
+
         assertTrue(checkQuant("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5));
         assertFalse(checkQuant("/home/coolpi/rknn_jni/coralAlgaeModelNoQuant-640-640-yolov8s.rknn", 2, ModelVersion.YOLO_V8));
     }
