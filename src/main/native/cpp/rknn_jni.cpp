@@ -144,11 +144,14 @@ Java_org_photonvision_rknn_RknnJNI_detect
 }
 
 /*
-* Class:     org_photonvision_rknn_RknnJNI
-* Method:    isQuantized
-* Signature: (J)Z
-*/
-JNIEXPORT jboolean JNICALL Java_org_photonvision_rknn_RknnJNI_isQuantized(JNIEnv *env, jclass, jlong detector_) {
+ * Class:     org_photonvision_rknn_RknnJNI
+ * Method:    isQuantized
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL
+Java_org_photonvision_rknn_RknnJNI_isQuantized
+  (JNIEnv *env, jclass, jlong detector_)
+{
   YoloModel *yolo = reinterpret_cast<YoloModel *>(detector_);
   return yolo->is_quant ? JNI_TRUE : JNI_FALSE;
 }

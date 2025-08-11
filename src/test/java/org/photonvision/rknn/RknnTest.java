@@ -17,17 +17,16 @@
 
 package org.photonvision.rknn;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import edu.wpi.first.util.CombinedRuntimeLoader;
 import java.io.IOException;
 import java.util.Arrays;
-
 import org.junit.jupiter.api.Test;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.photonvision.rknn.RknnJNI.ModelVersion;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class RknnTest {
     @Test
@@ -91,7 +90,12 @@ public class RknnTest {
         System.out.println("Loading rknn-jni");
         System.load("/home/coolpi/rknn_jni/cmake_build/librknn_jni.so");
 
-        assertTrue(checkQuant("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5));
-        assertFalse(checkQuant("/home/coolpi/rknn_jni/coralAlgaeModelNoQuant-640-640-yolov8s.rknn", 2, ModelVersion.YOLO_V8));
+        assertTrue(
+                checkQuant("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5));
+        assertFalse(
+                checkQuant(
+                        "/home/coolpi/rknn_jni/coralAlgaeModelNoQuant-640-640-yolov8s.rknn",
+                        2,
+                        ModelVersion.YOLO_V8));
     }
 }

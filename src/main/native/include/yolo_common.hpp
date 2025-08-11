@@ -45,6 +45,7 @@ public:
   ~YoloModel();
 
   bool is_quant;
+
 protected:
   virtual detect_result_group_t postProcess(std::vector<rknn_output> output,
                                             DetectionFilterParams params,
