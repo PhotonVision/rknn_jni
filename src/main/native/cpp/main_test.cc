@@ -21,7 +21,7 @@ int main_test(ModelVersion version)
         printf("Unknown version\n");
         return 1;
     }
-    
+
     std::cout << "created: " << (long unsigned int)wrapper << std::endl;
 
     for (int j = 0; j < 1; j++) {
@@ -51,7 +51,7 @@ int main_test(ModelVersion version)
             int y2 = det_result->box.bottom;
 
             cv::rectangle(
-                img, cv::Rect(x1, y1, x2-x1, y2-y1), (0,255,0), 3 
+                img, cv::Rect(x1, y1, x2-x1, y2-y1), (0,255,0), 3
             );
 
             // draw_rectangle(&src_image, x1, y1, x2 - x1, y2 - y1, COLOR_BLUE, 3);

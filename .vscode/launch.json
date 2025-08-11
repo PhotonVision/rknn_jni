@@ -28,7 +28,7 @@
                 }
             ]
         },
-        
+
 
         {
             "type": "java",
@@ -37,7 +37,7 @@
             "hostName": "localhost",
             "port": "5005"
         },
-        
+
         {
             "type": "java",
             "name": "Current File",

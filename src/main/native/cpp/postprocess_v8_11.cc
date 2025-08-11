@@ -203,7 +203,7 @@ void compute_dfl(float* tensor, int dfl_len, float* box){
             exp_t[i] = exp(tensor[i+b*dfl_len]);
             exp_sum += exp_t[i];
         }
-        
+
         for (int i=0; i< dfl_len; i++){
             acc_sum += exp_t[i]/exp_sum *i;
         }
@@ -216,9 +216,9 @@ static int process_i8(int8_t *box_tensor, int32_t box_zp, float box_scale,
                       int8_t *score_tensor, int32_t score_zp, float score_scale,
                       int8_t *score_sum_tensor, int32_t score_sum_zp, float score_sum_scale,
                       int grid_h, int grid_w, int stride, int dfl_len,
-                      std::vector<float> &boxes, 
-                      std::vector<float> &objProbs, 
-                      std::vector<int> &classId, 
+                      std::vector<float> &boxes,
+                      std::vector<float> &objProbs,
+                      std::vector<int> &classId,
                       float threshold, int numClasses)
 {
     int validCount = 0;
@@ -282,11 +282,11 @@ static int process_i8(int8_t *box_tensor, int32_t box_zp, float box_scale,
     return validCount;
 }
 
-static int process_fp32(float *box_tensor, float *score_tensor, float *score_sum_tensor, 
+static int process_fp32(float *box_tensor, float *score_tensor, float *score_sum_tensor,
                         int grid_h, int grid_w, int stride, int dfl_len,
-                        std::vector<float> &boxes, 
-                        std::vector<float> &objProbs, 
-                        std::vector<int> &classId, 
+                        std::vector<float> &boxes,
+                        std::vector<float> &objProbs,
+                        std::vector<int> &classId,
                         float threshold, int numClasses)
 {
     int validCount = 0;
@@ -388,13 +388,13 @@ int post_process_v8_11(cv::Size modelSize, rknn_output *outputs, BOX_RECT *paddi
             validCount += process_i8((int8_t *)outputs[box_idx].buf, output_attrs[box_idx].zp, output_attrs[box_idx].scale,
                                      (int8_t *)outputs[score_idx].buf, output_attrs[score_idx].zp, output_attrs[score_idx].scale,
                                      (int8_t *)score_sum, score_sum_zp, score_sum_scale,
-                                     grid_h, grid_w, stride, dfl_len, 
+                                     grid_h, grid_w, stride, dfl_len,
                                      filterBoxes, objProbs, classId, conf_threshold, numClasses);
         }
         else
         {
             validCount += process_fp32((float *)outputs[box_idx].buf, (float *)outputs[score_idx].buf, (float *)score_sum,
-                                       grid_h, grid_w, stride, dfl_len, 
+                                       grid_h, grid_w, stride, dfl_len,
                                        filterBoxes, objProbs, classId, conf_threshold, numClasses);
         }
 

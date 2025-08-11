@@ -20,8 +20,8 @@
 
 /* Header for class org_photonvision_rknn_RknnJNI */
 
-#ifndef RKNN_JAVA_SRC_MAIN_NATIVE_CPP_RKNN_JNI_H_
-#define RKNN_JAVA_SRC_MAIN_NATIVE_CPP_RKNN_JNI_H_
+#ifndef RKNN_JNI_SRC_MAIN_NATIVE_CPP_RKNN_JNI_H_
+#define RKNN_JNI_SRC_MAIN_NATIVE_CPP_RKNN_JNI_H_
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -32,14 +32,13 @@ extern "C" {
  */
 JNIEXPORT jlong JNICALL Java_org_photonvision_rknn_RknnJNI_create(JNIEnv *,
                                                                   jclass,
-                                                                  jstring,
-                                                                  jint, jint, jint);
-
+                                                                  jstring, jint,
+                                                                  jint, jint);
 
 JNIEXPORT jint JNICALL Java_org_photonvision_rknn_RknnJNI_setCoreMask(JNIEnv *,
-                                                                  jclass,
-                                                                  jlong,
-                                                                  jint);
+                                                                      jclass,
+                                                                      jlong,
+                                                                      jint);
 
 /*
  * Class:     org_photonvision_rknn_RknnJNI
@@ -61,4 +60,4 @@ JNIEXPORT jobjectArray JNICALL Java_org_photonvision_rknn_RknnJNI_detect(
 #ifdef __cplusplus
 } // extern "C"
 #endif
-#endif // RKNN_JAVA_SRC_MAIN_NATIVE_CPP_RKNN_JNI_H_
+#endif // RKNN_JNI_SRC_MAIN_NATIVE_CPP_RKNN_JNI_H_
