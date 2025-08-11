@@ -20,6 +20,7 @@ package org.photonvision.rknn;
 import edu.wpi.first.util.CombinedRuntimeLoader;
 import java.io.IOException;
 import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
