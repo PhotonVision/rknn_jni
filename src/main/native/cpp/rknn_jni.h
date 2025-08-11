@@ -58,7 +58,6 @@ JNIEXPORT jobjectArray JNICALL Java_org_photonvision_rknn_RknnJNI_detect(
     JNIEnv *, jclass, jlong, jlong, jdouble, jdouble);
 
 
-
 /*
  * Class:     org_photonvision_rknn_RknnJNI
  * Method:    isQuantized

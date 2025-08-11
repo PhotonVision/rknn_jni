@@ -56,7 +56,7 @@ static jobject MakeJObject(JNIEnv *env, const detect_result_t &result) {
 /*
  * Class:     org_photonvision_rknn_RknnJNI
  * Method:    create
- * Signature: (Ljava/lang/String;III)J
+ * Signature: (Ljava/lang/String;I)J
  */
 JNIEXPORT jlong JNICALL
 Java_org_photonvision_rknn_RknnJNI_create
@@ -112,7 +112,7 @@ Java_org_photonvision_rknn_RknnJNI_destroy
 /*
  * Class:     org_photonvision_rknn_RknnJNI
  * Method:    detect
- * Signature: (JJDD)[Ljava/lang/Object;
+ * Signature: (JJDDI)[Ljava/lang/Object;
  */
 JNIEXPORT jobjectArray JNICALL
 Java_org_photonvision_rknn_RknnJNI_detect

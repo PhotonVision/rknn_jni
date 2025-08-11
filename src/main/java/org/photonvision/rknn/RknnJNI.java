@@ -73,7 +73,8 @@ public class RknnJNI {
      *
      * @param modelPath Absolute path to the model on disk
      * @param numClasses How many classes. MUST MATCH or native code segfaults
-     * @param modelVer Which model is being used. Detections will be incorrect if not set to corresponding model.
+     * @param modelVer Which model is being used. Detections will be incorrect if not set to
+     *                 corresponding model.
      * @return Pointer to the detector in native memory
      */
     public static native long create(String modelPath, int numClasses, int modelVer, int coreNum);
@@ -86,7 +87,7 @@ public class RknnJNI {
      * @return return code of rknn_set_core_mask call, indicating success or failure
      */
     public static native int setCoreMask(long ptr, int desiredCore);
-    
+
     /**
      * Delete all native resources associated with a detector
      */
@@ -96,7 +97,7 @@ public class RknnJNI {
      * Run detection
      * @param detectorPtr Pointer to detector created above
      * @param imagePtr Pointer to a cv::Mat input image
-     * @param nmsThresh 
+     * @param nmsThresh
      * @param boxThresh
      */
     public static native RknnResult[] detect(
