@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include <vector>
 
 #include <opencv2/core/ocl.hpp>
 #include <opencv2/dnn.hpp>
@@ -23,33 +24,32 @@
 #include <opencv2/imgproc.hpp>
 
 void checkOpenCL() {
-  using namespace std;
-
   if (!cv::ocl::haveOpenCL()) {
-    cout << "OpenCL is not available..." << endl;
+    std::cout << "OpenCL is not available..." << std::endl;
     // return;
   } else {
-    cout << "Opencl claims to exist";
+    std::cout << "Opencl claims to exist";
   }
 
   std::cout << cv::getBuildInformation() << std::endl;
 
   cv::ocl::Context context;
   if (!context.create(cv::ocl::Device::TYPE_ALL)) {
-    cout << "Failed creating the context..." << endl;
+    std::cout << "Failed creating the context..." << std::endl;
     // return;
   }
 
-  cout << context.ndevices() << " CPU devices are detected."
-       << endl; // This bit provides an overview of the OpenCL devices you have
-                // in your computer
+  std::cout << context.ndevices() << " CPU devices are detected."
+            << std::endl; // This bit provides an overview of the OpenCL devices
+                          // you have in your computer
   for (int i = 0; i < context.ndevices(); i++) {
     cv::ocl::Device device = context.device(i);
-    cout << "name:              " << device.name() << endl;
-    cout << "available:         " << device.available() << endl;
-    cout << "imageSupport:      " << device.imageSupport() << endl;
-    cout << "OpenCL_C_Version:  " << device.OpenCL_C_Version() << endl;
-    cout << endl;
+    std::cout << "name:              " << device.name() << std::endl;
+    std::cout << "available:         " << device.available() << std::endl;
+    std::cout << "imageSupport:      " << device.imageSupport() << std::endl;
+    std::cout << "OpenCL_C_Version:  " << device.OpenCL_C_Version()
+              << std::endl;
+    std::cout << std::endl;
   }
 
   cv::ocl::Device(context.device(
@@ -76,10 +76,9 @@ private:
 
 void trydnn() {
   Timer timer;
-
-  using namespace std;
-  using namespace cv::dnn;
-  using namespace cv;
+  using cv::Mat;
+  using cv::dnn::readNetFromDarknet;
+  using std::vector;
   auto net = readNetFromDarknet(
       "/home/coolpi/rknn_java/opencv_test/yolov4-csp-swish.cfg",
       "/home/coolpi/rknn_java/opencv_test/yolov4-csp-swish.weights");
@@ -89,7 +88,7 @@ void trydnn() {
 
   cout << "got names\n";
 
-  std::vector<String> names = net.getUnconnectedOutLayersNames();
+  vector<String> names = net.getUnconnectedOutLayersNames();
   for (const auto &n : names)
     cout << n << " ";
   cout << endl;
@@ -97,12 +96,12 @@ void trydnn() {
   auto img = cv::imread("../../src/test/resources/bus.jpg");
   auto blob = blobFromImage(img, 1.0 / 255.0, {640, 640});
 
-  // std::vector<String> names = {
+  // vector<String> names = {
   //     "yolo_167", "yolo_171", "yolo_175"};
 
-  // std::vector<int> outLayers = net.getUnconnectedOutLayers();
+  // vector<int> outLayers = net.getUnconnectedOutLayers();
   // auto layersNames = net.getLayerNames();
-  // std::vector<String> names;
+  // vector<String> names;
   // for (const auto& o : outLayers) {
   //     names.push_back(layersNames[o - 1]);
   // }
@@ -115,7 +114,7 @@ void trydnn() {
     net.setInput(blob);
 
     cout << "Forward\n";
-    std::vector<Mat> outs;
+    vector<Mat> outs;
     net.forward(outs, names);
 
     std::cout << "cycle took: " << timer.elapsed() << "ms" << endl;

@@ -17,6 +17,10 @@
 
 #include "yolo_common.hpp"
 
+#include <cstdio>
+#include <string>
+#include <vector>
+
 #include <opencv2/imgproc.hpp>
 
 #include "im2d.h"
@@ -225,8 +229,8 @@ detect_result_group_t YoloModel::forward(cv::Mat &orig_img,
   std::memset(&pads, 0, sizeof(BOX_RECT));
   cv::Mat resized_img(modelSize, CV_8UC3);
   // 计算缩放比例/Calculate the scaling ratio
-  float scale_w = (float)modelSize.width / img.cols;
-  float scale_h = (float)modelSize.height / img.rows;
+  float scale_w = static_cast<float>(modelSize.width / img.cols);
+  float scale_h = static_cast<float>(modelSize.height / img.rows);
 
   // 图像缩放/Image scaling
   if (img_width != modelSize.width || img_height != modelSize.height) {
@@ -301,10 +305,12 @@ detect_result_group_t YoloV5Model::postProcess(std::vector<rknn_output> outputs,
     out_zps.push_back(output_attrs[i].zp);
   }
 
-  post_process_v5((int8_t *)outputs[0].buf, (int8_t *)outputs[1].buf,
-                  (int8_t *)outputs[2].buf, modelSize.width, modelSize.height,
-                  params.box_thresh, params.nms_thresh, pads, imageScale.width,
-                  imageScale.height, out_zps, out_scales, &result, numClasses);
+  post_process_v5(reinterpret_cast<int8_t *>(outputs[0].buf),
+                  reinterpret_cast<int8_t *>(outputs[1].buf),
+                  reinterpret_cast<int8_t *>(outputs[2].buf), modelSize.width,
+                  modelSize.height, params.box_thresh, params.nms_thresh, pads,
+                  imageScale.width, imageScale.height, out_zps, out_scales,
+                  &result, numClasses);
 
   return result;
 }
