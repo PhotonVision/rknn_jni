@@ -57,6 +57,14 @@ JNIEXPORT void JNICALL Java_org_photonvision_rknn_RknnJNI_destroy(JNIEnv *,
 JNIEXPORT jobjectArray JNICALL Java_org_photonvision_rknn_RknnJNI_detect(
     JNIEnv *, jclass, jlong, jlong, jdouble, jdouble);
 
+/*
+ * Class:     org_photonvision_rknn_RknnJNI
+ * Method:    isQuantized
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL
+Java_org_photonvision_rknn_RknnJNI_isQuantized(JNIEnv *, jclass, jlong);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

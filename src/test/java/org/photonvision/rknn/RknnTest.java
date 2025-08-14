@@ -17,6 +17,8 @@
 
 package org.photonvision.rknn;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import edu.wpi.first.util.CombinedRuntimeLoader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -67,5 +69,33 @@ public class RknnTest {
 
         System.out.println("Killing detector");
         RknnJNI.destroy(ptr);
+    }
+
+    private boolean checkQuant(String path, int numClasses, ModelVersion modelVer) {
+        long ptr = RknnJNI.create(path, numClasses, modelVer.ordinal(), 210);
+
+        if (ptr <= 0) {
+            throw new RuntimeException("Failed to create model");
+        }
+
+        boolean isQuantized = RknnJNI.isQuantized(ptr);
+
+        RknnJNI.destroy(ptr);
+
+        return isQuantized;
+    }
+
+    @Test
+    public void testQuantizationCheck() {
+        System.out.println("Loading rknn-jni");
+        System.load("/home/coolpi/rknn_jni/cmake_build/librknn_jni.so");
+
+        assertTrue(
+                checkQuant("/home/coolpi/rknn_jni/note-640-640-yolov5s.rknn", 1, ModelVersion.YOLO_V5));
+        assertFalse(
+                checkQuant(
+                        "/home/coolpi/rknn_jni/coralAlgaeModelNoQuant-640-640-yolov8s.rknn",
+                        2,
+                        ModelVersion.YOLO_V8));
     }
 }

@@ -44,6 +44,8 @@ public:
 
   ~YoloModel();
 
+  bool is_quant;
+
 protected:
   virtual detect_result_group_t postProcess(std::vector<rknn_output> output,
                                             DetectionFilterParams params,
@@ -63,7 +65,6 @@ protected:
   rknn_input_output_num io_num;
   std::vector<rknn_tensor_attr> input_attrs;
   std::vector<rknn_tensor_attr> output_attrs;
-  bool is_quant;
 
   rknn_input inputs[1];
 };

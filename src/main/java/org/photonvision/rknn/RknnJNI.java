@@ -74,7 +74,7 @@ public class RknnJNI {
      * @param modelPath Absolute path to the model on disk
      * @param numClasses How many classes. MUST MATCH or native code segfaults
      * @param modelVer Which model is being used. Detections will be incorrect if not set to
-     *     corrresponding model.
+     *     corresponding model.
      * @return Pointer to the detector in native memory
      */
     public static native long create(String modelPath, int numClasses, int modelVer, int coreNum);
@@ -89,11 +89,11 @@ public class RknnJNI {
      */
     public static native int setCoreMask(long ptr, int desiredCore);
 
-    /** Delete all native resources assocated with a detector */
+    /** Delete all native resources associated with a detector */
     public static native long destroy(long ptr);
 
     /**
-     * Run detction
+     * Run detection
      *
      * @param detectorPtr Pointer to detector created above
      * @param imagePtr Pointer to a cv::Mat input image
@@ -102,4 +102,12 @@ public class RknnJNI {
      */
     public static native RknnResult[] detect(
             long detectorPtr, long imagePtr, double nmsThresh, double boxThresh);
+
+    /**
+     * Check if a model is quantized (int8)
+     *
+     * @param detectorPtr Pointer to a detected created above
+     * @return true if quantized, false if not
+     */
+    public static native boolean isQuantized(long detectorPtr);
 }
