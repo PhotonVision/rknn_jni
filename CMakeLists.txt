@@ -86,6 +86,7 @@ add_library(
     src/main/native/cpp/preprocess.cc
     src/main/native/cpp/postprocess_v5.cc
     src/main/native/cpp/postprocess_v8_11.cc
+    src/main/native/cpp/postprocess_v11obb.cc
 )
 
 target_link_libraries(
