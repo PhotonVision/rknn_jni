@@ -35,7 +35,7 @@ jobs:
         with:
           python-version: 3.13
       - name: Install wpiformat
-        run: pip3 install wpiformat==2025.33
+        run: pip3 install wpiformat==2025.75
       - name: Run
         run: wpiformat
       - name: Check output
