@@ -50,20 +50,20 @@ set(OPENCV_TYPE "")
 
 # Download opencv, and save the path
 include(FetchContent)
-fetchcontent_declare(
+FetchContent_Declare(
     opencv_lib
     URL
         https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/${OPENCV_YEAR}/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-${OPENCV_ARCH}${OPENCV_TYPE}.zip
 )
-fetchcontent_makeavailable(opencv_lib)
+FetchContent_MakeAvailable(opencv_lib)
 
 # download OpenCV headers
-fetchcontent_declare(
+FetchContent_Declare(
     opencv_header
     URL
         https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/${OPENCV_YEAR}/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-headers.zip
 )
-fetchcontent_makeavailable(opencv_header)
+FetchContent_MakeAvailable(opencv_header)
 
 # This probably doesn't work great with shared libraries, but I don't care about those right now
 file(
