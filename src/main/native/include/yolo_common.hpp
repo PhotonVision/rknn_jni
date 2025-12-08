@@ -30,7 +30,7 @@ typedef struct {
   double box_thresh;
 } DetectionFilterParams;
 
-enum ModelVersion { YOLO_V5, YOLO_V8, YOLO_V11 };
+enum ModelVersion { YOLO_V5, YOLO_V8, YOLO_V11, YOLO_V11OBB };
 
 class YoloModel {
 public:
@@ -99,6 +99,20 @@ class YoloV11Model : public YoloModel {
 public:
   YoloV11Model(std::string modelPath, int num_classes_, int coreNumber)
       : YoloModel(modelPath, num_classes_, ModelVersion::YOLO_V11, coreNumber) {
+  }
+
+protected:
+  detect_result_group_t postProcess(std::vector<rknn_output> output,
+                                    DetectionFilterParams params,
+                                    cv::Size inputImageSize,
+                                    cv::Size2d inputImageScale,
+                                    BOX_RECT letterbox);
+};
+
+class YoloV11OBBModel : public YoloModel {
+public:
+  YoloV11OBBModel(std::string modelPath, int num_classes_, int coreNumber)
+      : YoloModel(modelPath, num_classes_, ModelVersion::YOLO_V11OBB, coreNumber) {
   }
 
 protected:

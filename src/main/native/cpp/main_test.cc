@@ -17,6 +17,11 @@ int main_test(ModelVersion version)
     } else if (version == ModelVersion::YOLO_V11){
         printf("Starting with version 11\n");
         wrapper = new YoloV11Model("note-robot-yolov11s-quant.rknn", 3, 0);
+    } else if (version == ModelVersion::YOLO_V11OBB){
+        printf("Starting with version 11OBB\n");
+        wrapper = new YoloV11OBBModel("cageconverted-640-640-yolov11obbn.rknn", 1, 0);
+        // wrapper = new YoloV11OBBModel("best_yolo11obbn_cage_CONVERTED_FP32.rknn", 1, 0);
+        // wrapper = new YoloV11OBBModel("epochbestREAL-1024-1024-yolov11obbm.rknn", 2, 0);
     } else {
         printf("Unknown version\n");
         return 1;
@@ -26,7 +31,9 @@ int main_test(ModelVersion version)
 
     for (int j = 0; j < 1; j++) {
         cv::Mat img;
-        img = cv::imread("robots.png");
+        img = cv::imread("test_cage_2_rotated.jpg");
+
+        // cv::resize(img, img, cv::Size(1024, 1024));
 
         DetectionFilterParams params {
             .nms_thresh = 0.45,
@@ -37,27 +44,39 @@ int main_test(ModelVersion version)
         std::cout << "Count: " << ret.count << std::endl;
         for (int i = 0; i < ret.count; ++i) {
             std::cout << "ID: " << ret.results[i].id << " conf " << ret.results[i].obj_conf << " @ "
-                << ret.results[i].box.top << " - "
-                << ret.results[i].box.left << " - "
-                << ret.results[i].box.bottom << " - "
-                << ret.results[i].box.right << " - "
+                << "cx: " << ret.results[i].obb.cx << " - "
+                << "cy: " << ret.results[i].obb.cy << " - "
+                << "width: " << ret.results[i].obb.width << " - "
+                << "height: " << ret.results[i].obb.height << " - "
+                << "angle: " << ret.results[i].obb.angle << " - "
                 << std::endl;
 
             auto *det_result = &(ret.results[i]);
 
-            int x1 = det_result->box.left;
-            int y1 = det_result->box.top;
-            int x2 = det_result->box.right;
-            int y2 = det_result->box.bottom;
+            int cx = det_result->obb.cx;
+            int cy = det_result->obb.cy;
+            int w  = det_result->obb.width;
+            int h  = det_result->obb.height;
+            float angle_rad = det_result->obb.angle;
+            float angle_deg = angle_rad * 180.0f / CV_PI; // RotatedRect expects degrees
 
-            cv::rectangle(
-                img, cv::Rect(x1, y1, x2-x1, y2-y1), (0,255,0), 3
-            );
+            cv::RotatedRect rrect(cv::Point2f((float)cx, (float)cy), cv::Size2f((float)w, (float)h), angle_deg);
 
-            // draw_rectangle(&src_image, x1, y1, x2 - x1, y2 - y1, COLOR_BLUE, 3);
+            cv::Point2f pts2f[4];
+            rrect.points(pts2f); // fill 4 corners
+
+            std::vector<cv::Point> box_pts(4);
+            for (int k = 0; k < 4; ++k) box_pts[k] = pts2f[k]; // round to ints
+
+            std::vector<std::vector<cv::Point>> contour(1, box_pts);
+            cv::drawContours(img, contour, 0, cv::Scalar(0, 255, 0), 3);
+
+            // place label near top left of the rotated box
+            cv::Rect bbox = cv::boundingRect(box_pts);
+
             char text[256];
             sprintf(text, "id%i %.1f%%", det_result->id, det_result->obj_conf * 100);
-            cv::putText(img, text, {x1, y1 + 10}, cv::FONT_ITALIC, 0.6, {100, 255, 0});
+            cv::putText(img, text, {bbox.x, bbox.y + 10}, cv::FONT_ITALIC, 1.25, {100, 255, 0});
         }
 
         cv::imwrite("out2.png", img);
@@ -76,6 +95,10 @@ int main() {
 //     threads.emplace_back(std::thread([]() {main_test("../note-640-640-yolov5s.rknn");}));
 //     for (auto& th : threads) th.join();
 
-    main_test(ModelVersion::YOLO_V8);
+    main_test(ModelVersion::YOLO_V11OBB);
+    // main_test(ModelVersion::YOLO_V11);
+    // main_test(ModelVersion::YOLO_V8);
     // main_test(ModelVersion::YOLO_V5);
+
+    return 0;
 }

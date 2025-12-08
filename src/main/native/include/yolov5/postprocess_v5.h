@@ -36,9 +36,17 @@ typedef struct _BOX_RECT {
   int bottom;
 } BOX_RECT;
 
+typedef struct _ROTATED_BOX_RECT {
+  int cx;
+  int cy;
+  int width;
+  int height;
+  float angle;
+} ROTATED_BOX_RECT;
+
 typedef struct __detect_result_t {
   int id;
-  BOX_RECT box;
+  ROTATED_BOX_RECT obb;
   float obj_conf;
 } detect_result_t;
 
