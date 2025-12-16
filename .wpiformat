@@ -10,16 +10,6 @@ cppSrcFileInclude {
 }
 
 modifiableFileExclude {
-  \.jpg$
-  \.jpeg$
-  \.png$
-  \.gif$
-  \.so$
-  \.dll$
-  \.webp$
-  \.ico$
-  \.rknn$
-  gradlew
   3rdparty*
   rknn_api.h
 }
