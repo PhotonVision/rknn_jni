@@ -47,7 +47,7 @@ dependencies {
     implementation wpilibTools.deps.wpilibJava("wpiutil")
     testImplementation wpilibTools.deps.wpilibJava("cscore")
 
-    implementation wpilibTools.deps.wpilibOpenCvJava("frc" + wpi.frcYear.get(), wpi.versions.opencvVersion.get())
+    implementation wpilibTools.deps.wpilibOpenCvJava("frc2025", wpi.versions.opencvVersion.get())
     testImplementation group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: wpi.versions.jacksonVersion.get()
     testImplementation group: "com.fasterxml.jackson.core", name: "jackson-core", version: wpi.versions.jacksonVersion.get()
     testImplementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: wpi.versions.jacksonVersion.get()
