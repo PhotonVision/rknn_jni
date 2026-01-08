@@ -83,7 +83,7 @@ jobs:
         path: cmake_build/*.so
 
     # Push to dev release on pushes to master
-    - uses: pyTooling/Actions/releaser@r0
+    - uses: pyTooling/Actions/releaser@r6
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: 'Dev'
