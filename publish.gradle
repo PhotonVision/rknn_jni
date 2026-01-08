@@ -1,6 +1,6 @@
 apply plugin: 'maven-publish'
 
-def nativeName = wpilibTools.platformMapper.currentPlatform.platformName;
+def nativeName = wpilibTools.platformMapper.wpilibClassifier;
 def artifactGroupId = 'org.photonvision'
 def baseArtifactId = "rknn_jni"
 
@@ -28,7 +28,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId = artifactGroupId
             artifactId = "${baseArtifactId}-java"
-            version = pubVersion;// + "-" + nativeName;
+            version = pubVersion;
 
             from components.java
         }

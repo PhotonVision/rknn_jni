@@ -1,0 +1,12 @@
+cppHeaderFileInclude {
+  \.h$
+}
+
+cppSrcFileInclude {
+  \.cpp$
+}
+
+modifiableFileExclude {
+  3rdparty*
+  rknn_api.h
+}

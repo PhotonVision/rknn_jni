@@ -1,9 +1,9 @@
 plugins {
     id "java"
-    id 'edu.wpi.first.WpilibTools' version '1.3.0'
+    id 'org.photonvision.tools.WpilibTools' version '2.3.1-photon'
     id "edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin" version "2020.2"
-    id "com.diffplug.spotless" version "6.22.0"
-    id "edu.wpi.first.GradleRIO" version "2024.1.1"
+    id "com.diffplug.spotless" version "8.1.0"
+    id "edu.wpi.first.GradleRIO" version "2026.1.1"
 }
 
 allprojects {
@@ -23,9 +23,9 @@ ext {
     pubVersion = versionString
     isDev = pubVersion.startsWith("dev")
 
-    wpilibVersion = "2024.3.2"
+    wpilibVersion = "2026.1.1"
     wpimathVersion = wpilibVersion
-    openCVversion = "4.8.0-2"
+    openCVversion = "4.10.0-3"
 }
 
 wpi.getVersions().getOpencvVersion().convention(openCVversion);
@@ -34,8 +34,8 @@ wpi.getVersions().getWpimathVersion().convention(wpimathVersion);
 wpilibTools.deps.wpilibVersion = wpilibVersion
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
@@ -73,7 +73,7 @@ test {
     }
 }
 
-ext.nativeName = wpilibTools.platformMapper.currentPlatform.platformName.replace('win', 'windows/').replace('mac', 'osx/').replace('linux', 'linux/').replace('x64', 'x86-64');
+def nativeName = wpilibTools.platformMapper.platformPath
 ext.outputsFolder = file("$buildDir/outputs")
 
 println("Building for $nativeName")
