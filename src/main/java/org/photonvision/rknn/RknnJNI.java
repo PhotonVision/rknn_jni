@@ -18,23 +18,41 @@
 package org.photonvision.rknn;
 
 import org.opencv.core.Point;
-import org.opencv.core.Rect2d;
+import org.opencv.core.RotatedRect;
+import org.opencv.core.Size;
 
 public class RknnJNI {
     public static enum ModelVersion {
         YOLO_V5,
         YOLO_V8,
-        YOLO_V11
+        YOLO_V11,
+        YOLO_V11OBB
     }
 
     public static class RknnResult {
-        public RknnResult(int left, int top, int right, int bottom, float conf, int class_id) {
+        /**
+         * Creates an RknnResult object representing one detected object
+         *
+         * @param cx The x position of the center point of the bounding box
+         * @param cy The y position of the center point of the bounding box
+         * @param width The width of the bounding rectangle
+         * @param height The height of the bounding rectangle
+         * @param angle The angle, in radians, in which the rectangle is rotated about its center point.
+         *     0 indicates an axis-aligned bbox
+         * @param conf The confidence of the detection
+         * @param class_id The class of the detection
+         */
+        public RknnResult(
+                int cx, int cy, int width, int height, float angle, float conf, int class_id) {
             this.conf = conf;
             this.class_id = class_id;
-            this.rect = new Rect2d(new Point(left, top), new Point(right, bottom));
+
+            // OpenCV uses degrees
+            this.rect =
+                    new RotatedRect(new Point(cx, cy), new Size(width, height), Math.toDegrees(angle));
         }
 
-        public final Rect2d rect;
+        public final RotatedRect rect;
         public final float conf;
         public final int class_id;
 

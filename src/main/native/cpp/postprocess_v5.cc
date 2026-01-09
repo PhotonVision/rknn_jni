@@ -323,10 +323,18 @@ int post_process_v5(int8_t *input0, int8_t *input1, int8_t *input2, int model_in
     float obj_conf = objProbs[i];
 
     detect_result_t det;
-    det.box.left = (int)(clamp(x1, 0, model_in_w) / scale_w);
-    det.box.top = (int)(clamp(y1, 0, model_in_h) / scale_h);
-    det.box.right = (int)(clamp(x2, 0, model_in_w) / scale_w);
-    det.box.bottom = (int)(clamp(y2, 0, model_in_h) / scale_h);
+
+    int resLeft = (int)(clamp(x1, 0, model_in_w) / scale_w);
+    int resTop = (int)(clamp(y1, 0, model_in_h) / scale_h);
+    int resRight = (int)(clamp(x2, 0, model_in_w) / scale_w);
+    int resBottom = (int)(clamp(y2, 0, model_in_h) / scale_h);
+
+    det.obb.cx = resLeft + ((resRight - resLeft) / 2);
+    det.obb.cy = resTop + ((resBottom - resTop) / 2);
+    det.obb.width = resRight - resLeft;
+    det.obb.height = resBottom - resTop;
+    det.obb.angle = 0.0f;
+
     det.obj_conf = obj_conf;
     det.id = id;
     group->results.push_back(det);
