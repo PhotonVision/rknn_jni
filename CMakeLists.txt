@@ -5,6 +5,7 @@ project(rknn_jni)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "-pthread")
+set(CMAKE_INSTALL_RPATH $ORIGIN)
 
 if(ENABLE_ASAN)
     message(STATUS "BUILD WITH ADDRESS SANITIZER")
@@ -69,8 +70,6 @@ file(
 set(OPENCV_INCLUDE_PATH ${opencv_header_SOURCE_DIR})
 message("Depending on opencv ${OPENCV_LIB_PATH}")
 
-set(CMAKE_INSTALL_RPATH "lib")
-
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
@@ -99,8 +98,6 @@ target_include_directories(
         ${JNI_INCLUDE_DIRS}
         ${OPENCV_INCLUDE_PATH}
 )
-
-set_target_properties(${PROJECT_NAME} PROPERTIES INSTALL_RPATH "\\\$ORIGIN/")
 
 include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME})
