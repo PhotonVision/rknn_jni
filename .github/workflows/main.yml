@@ -59,12 +59,14 @@ jobs:
         bind_mount_repository: true
         commands: |
             apt-get update
-            apt-get install -y cmake build-essential default-jdk openjdk-17-jdk
+            apt-get install -y cmake build-essential default-jdk openjdk-17-jdk binutils
             ls
             find .
             pwd
             cmake -B cmake_build -S . -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} -DCMAKE_INSTALL_PREFIX=cmake_build -DOPENCV_ARCH=linuxarm64 ${{ matrix.extra-cmake-args }}
             cmake --build cmake_build --target install -- -j 4
+            ldd cmake_build/lib/*.so
+            readelf -d cmake_build/lib/*.so
 
     - run: find .
 
