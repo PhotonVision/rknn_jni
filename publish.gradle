@@ -8,34 +8,29 @@ def jniType = project.findProperty("PublishType") ?: "";
 println("Building with JNI publish type: " + jniType);
 
 def license = file("$rootDir/LICENSE")
-def rknnCppMultiThreadLicense = file("$rootDir/rknn-cpp-Multithreading-License")
-def rknpu2License = file("$rootDir/rknpu2-License")
+def externalLicenses = file("$rootDir/ExternalLicenses")
 
 task nativeLibraryJar(type: Jar, dependsOn: copyNativeLibrary) {
     archiveClassifier = nativeName + jniType
     from outputsFolder
     from license
-    from rknnCppMultiThreadLicense
-    from rknpu2License
+    from externalLicenses
 }
 build.dependsOn nativeLibraryJar
 
 jar {
     from license
-    from rknnCppMultiThreadLicense
-    from rknpu2License
+    from externalLicenses
 }
 
 sourcesJar {
     from license
-    from rknnCppMultiThreadLicense
-    from rknpu2License
+    from externalLicenses
 }
 
 javadocJar {
     from license
-    from rknnCppMultiThreadLicense
-    from rknpu2License
+    from externalLicenses
 }
 
 publishing {
