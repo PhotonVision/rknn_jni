@@ -7,11 +7,31 @@ def baseArtifactId = "rknn_jni"
 def jniType = project.findProperty("PublishType") ?: "";
 println("Building with JNI publish type: " + jniType);
 
+def license = file("$rootDir/LICENSE")
+def externalLicenses = file("$rootDir/ExternalLicenses")
+
 task nativeLibraryJar(type: Jar, dependsOn: copyNativeLibrary) {
     archiveClassifier = nativeName + jniType
     from outputsFolder
+    from license
+    from externalLicenses
 }
 build.dependsOn nativeLibraryJar
+
+jar {
+    from license
+    from externalLicenses
+}
+
+sourcesJar {
+    from license
+    from externalLicenses
+}
+
+javadocJar {
+    from license
+    from externalLicenses
+}
 
 publishing {
     repositories {
