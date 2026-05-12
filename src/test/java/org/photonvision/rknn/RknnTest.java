@@ -19,13 +19,13 @@ package org.photonvision.rknn;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.photonvision.jni.CombinedRuntimeLoader;
 import java.io.IOException;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.photonvision.jni.CombinedRuntimeLoader;
 import org.photonvision.rknn.RknnJNI.ModelVersion;
 
 public class RknnTest {

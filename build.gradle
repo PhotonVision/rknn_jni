@@ -100,7 +100,7 @@ spotless {
         toggleOffOn()
         googleJavaFormat()
         leadingSpacesToTabs(2)
-        leadingSpacesToTabs(4)
+        leadingTabsToSpaces(4)
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()
