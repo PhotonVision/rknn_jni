@@ -52,8 +52,8 @@ jobs:
         distribution: temurin
 
     - run: |
-        apt-get update
-        apt-get install -y cmake build-essential default-jdk openjdk-17-jdk binutils
+        sudo apt-get update
+        sudo apt-get install -y cmake build-essential default-jdk openjdk-17-jdk binutils
         ls
         find .
         pwd
