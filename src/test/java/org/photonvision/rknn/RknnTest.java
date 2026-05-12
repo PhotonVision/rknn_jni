@@ -19,7 +19,7 @@ package org.photonvision.rknn;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import edu.wpi.first.util.CombinedRuntimeLoader;
+import org.photonvision.jni.CombinedRuntimeLoader;
 import java.io.IOException;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
