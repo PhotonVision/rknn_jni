@@ -8,11 +8,8 @@ gradle.allprojects {
         def stdout = new ByteArrayOutputStream()
         String tagIsh
         try {
-            exec {
-                commandLine 'git', 'describe', '--tags', "--match=v*"
-                standardOutput = stdout
-            }
-            tagIsh = stdout.toString().trim().toLowerCase()
+            def line = "git describe --tags --match=v*".execute().text.trim().readLines().last()
+            tagIsh = line.toString().trim().toLowerCase()
         } catch (Exception e) {
             tagIsh = "dev-Unknown"
         }

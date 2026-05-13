@@ -1,9 +1,8 @@
 plugins {
     id "java"
-    id 'org.photonvision.tools.WpilibTools' version '2.3.1-photon'
-    id "edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin" version "2020.2"
+    id 'org.photonvision.tools.WpilibTools' version '4.1.1-photon'
+    id "org.wpilib.WPILibRepositoriesPlugin" version "2027.0.0"
     id "com.diffplug.spotless" version "8.1.0"
-    id "edu.wpi.first.GradleRIO" version "2026.1.1"
 }
 
 allprojects {
@@ -12,6 +11,7 @@ allprojects {
         mavenLocal()
         maven { url = "https://maven.photonvision.org/repository/internal/" }
     }
+    wpilibRepositories.use2027Repos()
     wpilibRepositories.addAllReleaseRepositories(it)
     wpilibRepositories.addAllDevelopmentRepositories(it)
 }
@@ -22,20 +22,12 @@ apply from: "versioningHelper.gradle"
 ext {
     pubVersion = versionString
     isDev = pubVersion.startsWith("dev")
-
-    wpilibVersion = "2026.1.1"
-    wpimathVersion = wpilibVersion
-    openCVversion = "4.10.0-3"
+    openCVversion = "2027-4.13.0-3"
 }
 
-wpi.getVersions().getOpencvVersion().convention(openCVversion);
-wpi.getVersions().getWpilibVersion().convention(wpilibVersion);
-wpi.getVersions().getWpimathVersion().convention(wpimathVersion);
-wpilibTools.deps.wpilibVersion = wpilibVersion
-
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 dependencies {
@@ -46,11 +38,9 @@ dependencies {
 
     implementation wpilibTools.deps.wpilibJava("wpiutil")
     testImplementation wpilibTools.deps.wpilibJava("cscore")
+    testImplementation 'org.photonvision:photon-targeting-java:v2026.3.2'
 
-    implementation wpilibTools.deps.wpilibOpenCvJava("frc2025", wpi.versions.opencvVersion.get())
-    testImplementation group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: wpi.versions.jacksonVersion.get()
-    testImplementation group: "com.fasterxml.jackson.core", name: "jackson-core", version: wpi.versions.jacksonVersion.get()
-    testImplementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: wpi.versions.jacksonVersion.get()
+    implementation wpilibTools.deps.wpilibOpenCvJava(openCVversion)
 }
 
 tasks.withType(JavaCompile) {
@@ -105,12 +95,12 @@ spotless {
     java {
         target fileTree('.') {
             include '**/*.java'
-            exclude '**/build/**', '**/build-*/**', '**/src/generated/**'
+            exclude '**/build/**', '**/build-*/**', '**/src/generated/**', '**/cmake_build/**'
         }
         toggleOffOn()
         googleJavaFormat()
-        indentWithTabs(2)
-        indentWithSpaces(4)
+        leadingSpacesToTabs(2)
+        leadingTabsToSpaces(4)
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()
@@ -121,7 +111,7 @@ spotless {
             exclude '**/build/**', '**/build-*/**'
         }
         greclipse()
-        indentWithSpaces(4)
+        leadingTabsToSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
     }
@@ -131,7 +121,7 @@ spotless {
             exclude '**/build/**', '**/build-*/**'
         }
         trimTrailingWhitespace()
-        indentWithSpaces(2)
+        leadingTabsToSpaces(2)
         endWithNewline()
     }
 }
@@ -141,7 +131,10 @@ nativeTasks.addToSourceSetResources(sourceSets.test)
 nativeConfig.dependencies.add wpilibTools.deps.wpilib("wpinet")
 nativeConfig.dependencies.add wpilibTools.deps.wpilib("wpiutil")
 nativeConfig.dependencies.add wpilibTools.deps.wpilib("cscore")
-nativeConfig.dependencies.add wpilibTools.deps.wpilibOpenCv("frc" + wpi.frcYear.get(), wpi.versions.opencvVersion.get())
+nativeConfig.dependencies.add wpilibTools.deps.wpilibOpenCv(openCVversion)
 
+wrapper {
+    gradleVersion = "9.4.0"
+}
 
 apply from: "publish.gradle"
