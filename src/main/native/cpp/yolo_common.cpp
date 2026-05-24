@@ -26,6 +26,7 @@
 #include "im2d.h"
 #include "preprocess.h"
 #include "yolov8_11/postprocess_v8_11.h"
+#include "yolov11obb/postprocess_v11obb.h"
 
 static unsigned char *load_data(std::FILE *fp, size_t ofst, size_t sz) {
   unsigned char *data;
@@ -350,6 +351,26 @@ YoloV11Model::postProcess(std::vector<rknn_output> outputs,
   };
 
   post_process_v8_11(modelSize, outputs.data(), &padding, params.box_thresh,
+                     params.nms_thresh, &result, numClasses, output_attrs,
+                     is_quant, io_num.n_output);
+
+  return result;
+}
+
+detect_result_group_t
+YoloV11OBBModel::postProcess(std::vector<rknn_output> outputs,
+                          DetectionFilterParams params, cv::Size inputImageSize,
+                          cv::Size2d imageScale, BOX_RECT letterbox) {
+  detect_result_group_t result;
+
+  BOX_RECT padding{
+      0,
+      inputImageSize.width,
+      0,
+      inputImageSize.height,
+  };
+
+  post_process_v11obb(modelSize, outputs.data(), &padding, params.box_thresh,
                      params.nms_thresh, &result, numClasses, output_attrs,
                      is_quant, io_num.n_output);
 

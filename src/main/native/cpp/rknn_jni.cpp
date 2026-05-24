@@ -45,12 +45,12 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 
 static jobject MakeJObject(JNIEnv *env, const detect_result_t &result) {
   jmethodID constructor =
-      env->GetMethodID(detectionResultClass, "<init>", "(IIIIFI)V");
+      env->GetMethodID(detectionResultClass, "<init>", "(IIIIFFI)V");
 
   // Actually call the constructor
-  return env->NewObject(detectionResultClass, constructor, result.box.left,
-                        result.box.top, result.box.right, result.box.bottom,
-                        result.obj_conf, result.id);
+  return env->NewObject(detectionResultClass, constructor, result.obb.cx,
+                        result.obb.cy, result.obb.width, result.obb.height,
+                        result.obb.angle, result.obj_conf, result.id);
 }
 
 /*
@@ -76,6 +76,9 @@ Java_org_photonvision_rknn_RknnJNI_create
   } else if (static_cast<ModelVersion>(modelVer) == ModelVersion::YOLO_V11) {
     std::printf("Starting with version 11\n");
     ret = new YoloV11Model(nativeString, numClasses, coreNum);
+  } else if (static_cast<ModelVersion>(modelVer) == ModelVersion::YOLO_V11OBB) {
+    std::printf("Starting with version 11OBB\n");
+    ret = new YoloV11OBBModel(nativeString, numClasses, coreNum);
   } else {
     std::printf("Unknown version\n");
     return 0;
